@@ -49,6 +49,7 @@ class PerRpjpd extends BaseController
       'periode_rpjpd'   => $this->request->getVar('periode_rpjpd'),
       'th_awal_rpjpd'   => $this->request->getVar('th_awal_rpjpdd'),
       'th_akhir_rpjpd'  => $this->request->getVar('th_awal_rpjpdd') + 20,
+      'status_periode'  => $this->request->getVar('status_periode'),
     ];
     $this->rpjpd->save($data);
     session()->setFlashdata('success', 'Data Berhasil Diupdate!');

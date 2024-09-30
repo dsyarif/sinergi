@@ -2,8 +2,13 @@
 
 namespace App\Controllers;
 
+use App\Controllers\Renstra\TujuanRenstra;
+use App\Models\IndiTujuanRenstraModel;
 use App\Models\PeriodeRpjpd;
 use App\Models\RpjpdModel;
+use App\Models\RpjmdModel;
+use App\Models\OpdModel;
+use App\Models\TujuanRenstraModel;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
@@ -48,13 +53,17 @@ abstract class BaseController extends Controller
     /**
      * @return void
      */
-    protected $rpjpd, $validation;
+    protected $rpjpd, $validation, $rpjmd, $opd, $tujuanrenstra, $inditujuanrenstra;
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
     {
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);
+        $this->validation         = \Config\Services::validation();
+        $this->rpjmd              = new RpjmdModel();
         $this->rpjpd              = new RpjpdModel();
-        $this->validation = \Config\Services::validation();
+        $this->opd                = new OpdModel();
+        $this->tujuanrenstra      = new TujuanRenstraModel();
+        $this->inditujuanrenstra      = new IndiTujuanRenstraModel();
 
         // Preload any models, libraries, etc, here.
 

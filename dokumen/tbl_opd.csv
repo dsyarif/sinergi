@@ -1,0 +1,81 @@
+1.01.0.00.0.00.01.0000;;Dinas Pendidikan;Dindik;Unit
+1.02.0.00.0.00.01.0000;1.02.0.00.0.00.01.0000;Dinas Kesehatan;Dinkes;Unit
+1.02.0.00.0.00.01.0001;1.02.0.00.0.00.01.0000;RSUD Bendan;RSUD Bendan;Sub Unit
+1.02.0.00.0.00.01.0002;1.02.0.00.0.00.01.0000;Puskesmas Bendan;Puskesmas Bendan;Sub Unit
+1.02.0.00.0.00.01.0003;1.02.0.00.0.00.01.0000;Puskesmas Kramatsari;Puskesmas Kramatsari;Sub Unit
+1.02.0.00.0.00.01.0004;1.02.0.00.0.00.01.0000;Puskesmas Tirto;Puskesmas Tirto;Sub Unit
+1.02.0.00.0.00.01.0005;1.02.0.00.0.00.01.0000;Puskesmas Medono;Puskesmas Medono;Sub Unit
+1.02.0.00.0.00.01.0006;1.02.0.00.0.00.01.0000;Puskesmas Noyontaan;Puskesmas Noyontaan;Sub Unit
+1.02.0.00.0.00.01.0007;1.02.0.00.0.00.01.0000;Puskesmas Tondano;Puskesmas Tondano;Sub Unit
+1.02.0.00.0.00.01.0008;1.02.0.00.0.00.01.0000;Puskesmas Klego;Puskesmas Klego;Sub Unit
+1.02.0.00.0.00.01.0009;1.02.0.00.0.00.01.0000;Puskesmas Sokorejo;Puskesmas Sokorejo;Sub Unit
+1.02.0.00.0.00.01.0010;1.02.0.00.0.00.01.0000;Puskesmas Dukuh;Puskesmas Dukuh;Sub Unit
+1.02.0.00.0.00.01.0011;1.02.0.00.0.00.01.0000;Puskesmas Krapyak Kidul;Puskesmas Krapyak Kidul;Sub Unit
+1.02.0.00.0.00.01.0012;1.02.0.00.0.00.01.0000;Puskesmas Kusuma Bangsa;Puskesmas Kusuma Bangsa;Sub Unit
+1.02.0.00.0.00.01.0013;1.02.0.00.0.00.01.0000;Puskesmas Jenggot;Puskesmas Jenggot;Sub Unit
+1.02.0.00.0.00.01.0014;1.02.0.00.0.00.01.0000;Puskesmas Pekalongan Selatan;Puskesmas Pekalongan Selatan;Sub Unit
+1.02.0.00.0.00.01.0015;1.02.0.00.0.00.01.0000;Puskesmas Buaran;Puskesmas Buaran;Sub Unit
+1.02.0.00.0.00.01.0016;1.02.0.00.0.00.01.00;Balai Pelayanan dan Saintifikasi Jamu;BPSJ;Sub Unit
+1.03.0.00.0.00.10.0000;;Dinas Pekerjaan Umum dan Penataan Ruang;DPU-PR;Unit
+1.04.2.10.0.00.01.0000;;Dinas Perumahan Rakyat dan Kawasan Permukiman;Dinperkim;Unit
+1.05.0.00.0.00.01.0000;;Satuan Polisi Pamong Praja, Pemadam Kebakaran dan Penyelamatan;Satpol P3KP;Unit
+1.05.0.00.0.00.04.0000;;Badan Penanggulangan Bencana Daerah;BPBD;Unit
+1.06.2.14.0.00.03.0000;;Dinas Sosial, Pengendalian Penduduk dan Keluarga Berencana;Dinsos P2KB;Unit
+2.11.0.00.0.00.01.0000;;Dinas Lingkungan Hidup;DLH;Unit
+2.12.0.00.0.00.01.0000;;Dinas Kependudukan dan Pencatatan Sipil;Dindukcapil;Unit
+2.13.2.08.0.00.02.0000;;Dinas Pemberdayaan Masyarakat, Perempuan dan Perlindungan Anak;DPMPPA;Unit
+2.15.0.00.0.00.01.0000;;Dinas Perhubungan;Dinhub;Unit
+2.16.2.20.2.21.02.0000;;Dinas Komunikasi dan Informatika;Dinkominfo;Unit
+2.18.0.00.0.00.02.0000;;Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu;DPMPTSP;Unit
+2.24.2.23.0.00.02.0000;;Dinas Kearsipan dan Perpustakaan;Dinarpus;Unit
+3.25.0.00.0.00.01.0000;;Dinas Kelautan dan Perikanan;DKP;Unit
+3.26.2.22.2.19.02.0000;;Dinas Pariwisata, Kebudayaan, Kepemudaan dan Olahraga;Dinparbudpora;Unit
+3.27.2.09.0.00.02.0000;;Dinas Pertanian dan Pangan;Dinperpa;Unit
+3.30.2.17.0.00.02.0000;;Dinas Perdagangan,Koperasi, Usaha Kecil dan Menengah;Dindagkop-UKM;Unit
+3.31.2.07.0.00.05.0000;;Dinas Perindustrian dan Tenaga Kerja;Dinperinaker;Unit
+4.01.0.00.0.00.01.0000;4.01.0.00.0.00.01.0000;Sekretariat Daerah;Setda;Unit
+4.01.0.00.0.00.01.0001;4.01.0.00.0.00.01.0000;Bagian Pemerintahan;Bag. Pemerintahan;Sub Unit
+4.01.0.00.0.00.01.0002;4.01.0.00.0.00.01.0000;Bagian Hukum;Bag. Hukum;Sub Unit
+4.01.0.00.0.00.01.0003;4.01.0.00.0.00.01.0000;Bagian Organisasi;Bag. Organisasi;Sub Unit
+4.01.0.00.0.00.01.0004;4.01.0.00.0.00.01.0000;Bagian Perekonomian Dan SDA;Bag. Perekonomian dan SDA;Sub Unit
+4.01.0.00.0.00.01.0005;4.01.0.00.0.00.01.0000;Bagian Pengadaan Barang/Jasa Dan Administrasi Pembangunan;Bag. PBJ Minbang;Sub Unit
+4.01.0.00.0.00.01.0006;4.01.0.00.0.00.01.0000;Bagian Kesejahteraan Rakyat;Bag. Kesra;Sub Unit
+4.01.0.00.0.00.01.0007;4.01.0.00.0.00.01.0000;Bagian Umum;Bag. Umum;Sub Unit
+4.01.0.00.0.00.01.0008;4.01.0.00.0.00.01.0000;Bagian Protokol dan Komunikasi Pimpinan;Bag. Prokompim;Sub Unit
+4.02.0.00.0.00.01.0000;;Sekretariat DPRD;Set DPRD;Unit
+5.01.5.05.0.00.02.0000;;Badan Perencanaan Pembangunan, Penelitian dan Pengembangan Daerah;Bappeda;Unit
+5.02.0.00.0.00.04.0000;;Badan Pendapatan, Keuangan dan Aset Daerah;BPKAD;Unit
+5.03.5.04.0.00.01.0000;;Badan Kepegawaian dan Pengembangan Sumber Daya Manusia;BKPSDM;Unit
+6.01.0.00.0.00.01.0000;;Inspektorat Daerah;Inspektorat Daerah;Unit
+7.01.0.00.0.00.01.0000;7.01.0.00.0.00.01.0000;Kecamatan Pekalongan Utara;Kec. Utara;Unit
+7.01.0.00.0.00.01.0001;7.01.0.00.0.00.01.0000;Kelurahan Kandang Panjang;Kel. Kandang Panjang;Sub Unit
+7.01.0.00.0.00.01.0002;7.01.0.00.0.00.01.0000;Kelurahan Panjang Wetan;Kel. Panjang Wetan;Sub Unit
+7.01.0.00.0.00.01.0003;7.01.0.00.0.00.01.0000;Kelurahan Degayu;Kel. Degayu;Sub Unit
+7.01.0.00.0.00.01.0004;7.01.0.00.0.00.01.0000;Kelurahan Bandengan;Kel. Bandengan;Sub Unit
+7.01.0.00.0.00.01.0005;7.01.0.00.0.00.01.0000;Kelurahan Krapyak;Kel. Krapyak;Sub Unit
+7.01.0.00.0.00.01.0006;7.01.0.00.0.00.01.0000;Kelurahan Padukuhan Kraton;Kel. Padukuhan Kraton;Sub Unit
+7.01.0.00.0.00.01.0007;7.01.0.00.0.00.01.0000;Kelurahan Panjang Baru;Kel. Panjang Baru;Sub Unit
+7.01.0.00.0.00.02.0000;7.01.0.00.0.00.02.0000;Kecamatan Pekalongan Selatan;Kec. Selatan;Unit
+7.01.0.00.0.00.02.0001;7.01.0.00.0.00.02.0000;Kelurahan Jenggot;Kel. Jenggot;Sub Unit
+7.01.0.00.0.00.02.0002;7.01.0.00.0.00.02.0000;Kelurahan Buaran Kradenan;Kel. Buakra;Sub Unit
+7.01.0.00.0.00.02.0003;7.01.0.00.0.00.02.0000;Kelurahan Kuripan Kertoharjo;Kel. Kurker;Sub Unit
+7.01.0.00.0.00.02.0004;7.01.0.00.0.00.02.0000;Kelurahan Kuripan Yosorejo;Kel. Kuryos;Sub Unit
+7.01.0.00.0.00.02.0005;7.01.0.00.0.00.02.0000;Kelurahan Soko Duwet;Kel. Soko duwet;Sub Unit
+7.01.0.00.0.00.02.0006;7.01.0.00.0.00.02.0000;Kelurahan Banyurip;Kel. Banyurip;Sub Unit
+7.01.0.00.0.00.03.0000;7.01.0.00.0.00.03.0000;Kecamatan Pekalongan Barat;Kec. Barat;Unit
+7.01.0.00.0.00.03.0001;7.01.0.00.0.00.03.0000;Kelurahan Medono;Kel. Medono;Sub Unit
+7.01.0.00.0.00.03.0002;7.01.0.00.0.00.03.0000;Kelurahan Podosugih;Kel. Podosugih;Sub Unit
+7.01.0.00.0.00.03.0003;7.01.0.00.0.00.03.0000;Kelurahan Tirto;Kel. Tirto;Sub Unit
+7.01.0.00.0.00.03.0004;7.01.0.00.0.00.03.0000;Kelurahan Sapuro Kebulen;Kel. Sapkeb;Sub Unit
+7.01.0.00.0.00.03.0005;7.01.0.00.0.00.03.0000;Kelurahan Bendan Kergon;Kel. Danker;Sub Unit
+7.01.0.00.0.00.03.0006;7.01.0.00.0.00.03.0000;Kelurahan Pasirkratonkramat;Kel. PKK;Sub Unit
+7.01.0.00.0.00.03.0007;7.01.0.00.0.00.03.0000;Kelurahan Pringrejo;Kel. Pringrejo;Sub Unit
+7.01.0.00.0.00.04.0000;7.01.0.00.0.00.04.0000;Kecamatan Pekalongan Timur;Kec. Timur;Unit
+7.01.0.00.0.00.04.0001;7.01.0.00.0.00.04.0000;Kelurahan Kauman;Kel. Kauman;Sub Unit
+7.01.0.00.0.00.04.0002;7.01.0.00.0.00.04.0000;Kelurahan Poncol;Kel. Poncol;Sub Unit
+7.01.0.00.0.00.04.0003;7.01.0.00.0.00.04.0000;Kelurahan Klego;Kel. Klego;Sub Unit
+7.01.0.00.0.00.04.0004;7.01.0.00.0.00.04.0000;Kelurahan Gamer;Kel. Gamer;Sub Unit
+7.01.0.00.0.00.04.0005;7.01.0.00.0.00.04.0000;Kelurahan Noyontaansari;Kel. Noyosari;Sub Unit
+7.01.0.00.0.00.04.0006;7.01.0.00.0.00.04.0000;Kelurahan Setono;Kel. Setono;Sub Unit
+7.01.0.00.0.00.04.0007;7.01.0.00.0.00.04.0000;Kelurahan Kali Baros;Kel. Kali Baros;Sub Unit
+8.01.0.00.0.00.01.0000;;Badan Kesatuan Bangsa dan Politik;Bakesbangpol;Unit

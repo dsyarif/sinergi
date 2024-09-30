@@ -30,7 +30,9 @@
   <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.5.1/css/all.css">
 
   <!-- Data Table Css -->
-  <link href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.1.2/b-3.1.0/b-html5-3.1.0/fc-5.0.1/fh-4.0.1/r-3.0.2/datatables.min.css" rel="stylesheet">
+  <!-- <link href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.1.2/b-3.1.0/b-html5-3.1.0/fc-5.0.1/fh-4.0.1/r-3.0.2/datatables.min.css" rel="stylesheet"> -->
+  <link href="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.1.7/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/r-3.0.3/sc-2.4.3/datatables.min.css" rel="stylesheet">
+
 
   <!-- Style.css -->
   <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets\css\style.css">
@@ -224,6 +226,12 @@
                     <span class="pcoded-mtext">Pengguna</span>
                   </a>
                 </li>
+                <li class="">
+                  <a href="<?= base_url() ?>opd">
+                    <span class="pcoded-micon"><i class="fa-regular fa-building"></i></span>
+                    <span class="pcoded-mtext">OPD</span>
+                  </a>
+                </li>
               </ul>
               <div class="pcoded-navigatio-lavel">RPJPD</div>
               <ul class="pcoded-item pcoded-left-item">
@@ -235,7 +243,7 @@
                 </li>
                 <li class="pcoded-hasmenu">
                   <a href="javascript:void(0)">
-                    <span class="pcoded-micon"><i class="feather icon-home"></i></span>
+                    <span class="pcoded-micon"><i class="fa-solid fa-timeline"></i></span>
                     <span class="pcoded-mtext">Tahapan</span>
                   </a>
                   <ul class="pcoded-submenu">
@@ -266,13 +274,34 @@
                     </li>
                   </ul>
                 </li>
-                <li class="">
+                <!-- <li class="">
                   <a href="navbar-light.htm">
                     <span class="pcoded-micon"><i class="feather icon-menu"></i></span>
                     <span class="pcoded-mtext">Kegiatan</span>
                   </a>
+                </li> -->
+              </ul>
+
+              <div class="pcoded-navigatio-lavel">RPJMD</div>
+              <ul class="pcoded-item pcoded-left-item">
+                <li class="">
+                  <a href="<?= base_url() ?>rpjmd">
+                    <span class="pcoded-micon"><i class="feather icon-calendar"></i></span>
+                    <span class="pcoded-mtext">Periode</span>
+                  </a>
                 </li>
               </ul>
+
+              <div class="pcoded-navigatio-lavel">Rencana Strategis</div>
+              <ul class="pcoded-item pcoded-left-item">
+                <li class="">
+                  <a href="<?= base_url() ?>renstra">
+                    <span class="pcoded-micon"><i class="fa-regular fa-clipboard"></i></span>
+                    <span class="pcoded-mtext">Renstra</span>
+                  </a>
+                </li>
+              </ul>
+
 
             </div>
           </nav>
@@ -296,7 +325,10 @@
 
   <!-- data-table js -->
 
-  <script src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.1.2/b-3.1.0/b-html5-3.1.0/fc-5.0.1/fh-4.0.1/r-3.0.2/datatables.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.1.7/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/r-3.0.3/sc-2.4.3/datatables.min.js"></script>
+  <!-- <script src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.1.2/b-3.1.0/b-html5-3.1.0/fc-5.0.1/fh-4.0.1/r-3.0.2/datatables.min.js"></script> -->
 
 
   <!-- custom js -->
@@ -306,7 +338,8 @@
 
   <!-- swetalert -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+  <!-- jquery slimscroll js -->
+  <script type="text/javascript" src="<?= base_url() ?>bower_components\jquery-slimscroll\js\jquery.slimscroll.js"></script>
   <!-- year-picker -->
   <script>
     $(function() {
