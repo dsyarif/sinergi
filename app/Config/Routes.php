@@ -32,9 +32,18 @@ $routes->group('opd', static function ($routes) {
   $routes->add('/', 'Opd');
 });
 
+// Tahapan
+$routes->group('tahapan', static function ($routes) {
+  $routes->add('/', 'Tahapan');
+  $routes->add('save', 'Tahapan::save');
+  $routes->add('update', 'Tahapan::update');
+  $routes->add('delete/(:num)', 'Tahapan::delete/$1');
+});
+
 // Resntra
 $routes->group('renstra', static function ($routes) {
   $routes->add('/', 'Renstra\Renstra');
+  $routes->add('set-rpjmd/(:num)', 'Renstra\Renstra::set_rpjmd/$1');
 });
 
 // Tujuan Renstra
@@ -44,6 +53,26 @@ $routes->group('tujuan-renstra', static function ($routes) {
   $routes->add('save', 'Renstra\TujuanRenstra::save');
   $routes->add('update', 'Renstra\TujuanRenstra::update');
   $routes->add('delete/(:num)', 'Renstra\TujuanRenstra::delete/$1');
+
+  $routes->add('add-indi', 'Renstra\TujuanRenstra::add_indi');
+  $routes->add('update-indi', 'Renstra\TujuanRenstra::update_indi');
+  $routes->add('delete-indi/(:num)', 'Renstra\TujuanRenstra::delete_indi/$1');
+
+  $routes->add('set-rpjmd/(:num)', 'Renstra\TujuanRenstra::set_rpjmd/$1');
+});
+
+$routes->group('sasaran-renstra', static function ($routes) {
+  $routes->add('/', 'Renstra\SasaranRenstra');
+  $routes->add('add/(:any)', 'Renstra\SasaranRenstra::add/$1');
+  $routes->add('save', 'Renstra\SasaranRenstra::save');
+  $routes->add('update', 'Renstra\SasaranRenstra::update');
+  $routes->add('delete/(:num)', 'Renstra\SasaranRenstra::delete/$1');
+
+  $routes->add('add-indi', 'Renstra\SasaranRenstra::add_indi');
+  $routes->add('update-indi', 'Renstra\SasaranRenstra::update_indi');
+  $routes->add('delete-indi/(:num)', 'Renstra\SasaranRenstra::delete_indi/$1');
+
+  $routes->add('set-rpjmd/(:num)', 'Renstra\SasaranRenstra::set_rpjmd/$1');
 });
 
 // Indikator Tujuan Renstra

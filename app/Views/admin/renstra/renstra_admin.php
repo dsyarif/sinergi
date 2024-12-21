@@ -9,13 +9,25 @@
         <!-- Page-header start -->
         <div class="page-header">
           <div class="row align-items-end">
-            <div class="col-lg-8">
+            <div class="col-xl-10">
               <div class="page-header-title">
                 <div class="d-inline">
                   <h4>Rencana Strategis (Renstra)</h4>
                   <!-- <span>Tuj</span> -->
                 </div>
               </div>
+            </div>
+
+            <div class="col-xl-2 float-right">
+              <select id="pilihan" onchange="setrpjmd()" class="form-control form-control-inverse text-center">
+                <?php
+                $ses_rpjmd = session()->get('rpjmd');
+                ?>
+                <option label="== Pilih RPJMD =="></option>
+                <?php foreach ($rpjmd as $r): ?>
+                  <option value="<?= $r['id_rpjmd']; ?>" <?= ($ses_rpjmd == $r['id_rpjmd']) ? 'selected' : ''; ?>><?= $r['th_awal_rpjmd']; ?> - <?= $r['th_akhir_rpjmd']; ?></option>
+                <?php endforeach ?>
+              </select>
             </div>
 
           </div>
@@ -30,7 +42,6 @@
               <div class="card">
                 <div class="card-header">
                   <h5>Data Renstra Kota Pekalongan</h5>
-                  <!-- Button trigger modal -->
                 </div>
                 <div class="card-block">
                   <div class="dt-responsive table-responsive">
@@ -52,7 +63,15 @@
                         foreach ($opd as $o): ?>
                           <?php
                           $db                = \Config\Database::connect();
-                          $jml_tujuan        = $db->table('tb_tujuan_renstra')->where(['kode_opd' => $o['kode_opd']])->get()->getNumRows();
+                          // $jml_tujuan        = $db->table('tb_renstra_tujuan')->where(['kode_opd' => $o['kode_opd']])->get()->getNumRows();
+                          if (!empty($ses_rpjmd)) {
+                            $jml_tujuan        = $db->table('tb_renstra_tujuan')->join('tb_opd', 'tb_renstra_tujuan.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_tujuan.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['tb_renstra_tujuan.id_rpjmd' => $ses_rpjmd, 'tb_opd.kode_opd' => $o['kode_opd']])->get()->getNumRows();
+                            $jml_sasaran        = $db->table('tb_renstra_sasaran')->join('tb_opd', 'tb_renstra_sasaran.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_sasaran.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['tb_renstra_sasaran.id_rpjmd' => $ses_rpjmd, 'tb_opd.kode_opd' => $o['kode_opd']])->get()->getNumRows();
+                          } else {
+                            $jml_tujuan        = $db->table('tb_renstra_tujuan')->join('tb_opd', 'tb_renstra_tujuan.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_tujuan.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['status_rpjmd' => 'Aktif', 'tb_opd.kode_opd' => $o['kode_opd']])->get()->getNumRows();
+                            $jml_sasaran        = $db->table('tb_renstra_sasaran')->join('tb_opd', 'tb_renstra_sasaran.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_sasaran.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['status_rpjmd' => 'Aktif', 'tb_opd.kode_opd' => $o['kode_opd']])->get()->getNumRows();
+                          }
+
                           ?>
                           <tr>
                             <td class="text-center"><?= $no++; ?></td>
@@ -63,7 +82,11 @@
                                 <?= $jml_tujuan; ?> Tujuan
                               </a>
                             </td>
-                            <td class="text-center"><button class="btn hor-grd btn-grd-inverse btn-sm">1 Sasaran</button></td>
+                            <td class="text-center">
+                              <a href="<?= base_url() ?>sasaran-renstra/add/<?= $o['kode_opd']; ?>" class="btn hor-grd btn-grd-inverse btn-sm">
+                                <?= $jml_sasaran; ?> Sasaran
+                              </a>
+                            </td>
                             <td class="text-center"><button class="btn hor-grd btn-grd-inverse btn-sm">Program</button></td>
                             <td class="text-center"><button class="btn hor-grd btn-grd-inverse btn-sm">Kegiatan</button></td>
                             <td class="text-center"><button class="btn hor-grd btn-grd-inverse btn-sm">Sub Kegiatan</button></td>
@@ -118,6 +141,20 @@
       }
     });
   });
+</script>
+
+<script>
+  function setrpjmd() {
+    var id = $('#pilihan').val();
+    $.ajax({
+      url: `renstra/set-rpjmd/` + id,
+      type: 'GET',
+      dataType: 'json',
+      success: function(response) {
+        location.reload();
+      }
+    });
+  }
 </script>
 
 <?= $this->endSection(); ?>

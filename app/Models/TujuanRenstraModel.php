@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class TujuanRenstraModel extends Model
 {
-    protected $table            = 'tb_tujuan_renstra';
+    protected $table            = 'tb_renstra_tujuan';
     protected $primaryKey       = 'id_tujuan_renstra';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';

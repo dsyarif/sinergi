@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title><?= $title; ?> - Perencanaan Kota Pekalongan </title>
+  <title><?= $title; ?> - Perencanaan Pembangunan Daerah Terintegrasi Kota Pekalongan </title>
   <!-- HTML5 Shim and Respond.js IE10 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 10]>
@@ -98,8 +98,8 @@
             <a class="mobile-menu" id="mobile-collapse" href="#!">
               <i class="feather icon-menu"></i>
             </a>
-            <a href="index-1.htm">
-              <img class="img-fluid" src="<?= base_url() ?>assets\images\logo5.png" style="height: 90px;" alt="Theme-Logo">
+            <a>
+              <img class="img-fluid" src="<?= base_url() ?>assets\images\logo7.png" style="height: 120px;position: absolute;top: 50%;left: 40%;transform: translate(-50%, -50%);" alt="Theme-Logo">
             </a>
             <a class="mobile-options">
               <i class="feather icon-more-horizontal"></i>
@@ -137,9 +137,9 @@
                     </li>
                     <li>
                       <div class="media">
-                        <img class="d-flex align-self-center img-radius" src="<?= base_url() ?>assets\images\avatar-4.jpg" alt="Generic placeholder image">
+                        <img class="d-flex align-self-center img-radius" src="<?= base_url() ?>assets\images\avatar-7.jpg" alt="Generic placeholder image">
                         <div class="media-body">
-                          <h5 class="notification-user">John Doe</h5>
+                          <h5 class="notification-user">Admin</h5>
                           <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
                           <span class="notification-time">30 minutes ago</span>
                         </div>
@@ -157,7 +157,7 @@
                     </li>
                     <li>
                       <div class="media">
-                        <img class="d-flex align-self-center img-radius" src="<?= base_url() ?>assets\images\avatar-4.jpg" alt="Generic placeholder image">
+                        <img class="d-flex align-self-center img-radius" src="<?= base_url() ?>assets\images\avatar-7.jpg" alt="Generic placeholder image">
                         <div class="media-body">
                           <h5 class="notification-user">Sara Soudein</h5>
                           <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
@@ -179,8 +179,8 @@
               <li class="user-profile header-notification">
                 <div class="dropdown-primary dropdown">
                   <div class="dropdown-toggle" data-toggle="dropdown">
-                    <img src="<?= base_url() ?>assets\images\avatar-4.jpg" class="img-radius" alt="User-Profile-Image">
-                    <span>John Doe</span>
+                    <img src="<?= base_url() ?>assets\images\avatar-7.jpg" class="img-radius" alt="User-Profile-Image">
+                    <span>Admin</span>
                     <i class="feather icon-chevron-down"></i>
                   </div>
                   <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
@@ -230,6 +230,12 @@
                   <a href="<?= base_url() ?>opd">
                     <span class="pcoded-micon"><i class="fa-regular fa-building"></i></span>
                     <span class="pcoded-mtext">OPD</span>
+                  </a>
+                </li>
+                <li class="">
+                  <a href="<?= base_url() ?>tahapan">
+                    <span class="pcoded-micon"><i class="fa-solid fa-timeline"></i></span>
+                    <span class="pcoded-mtext">Tahapan</span>
                   </a>
                 </li>
               </ul>
@@ -333,6 +339,24 @@
 
   <!-- custom js -->
   <script src="<?= base_url() ?>assets\js\vartical-layout.min.js"></script>
+  <script type="text/javascript" src="<?= base_url() ?>\assets\js\script.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      $("body").tooltip({
+        selector: '[data-toggle=tooltip]'
+      });
+    });
+
+    $(document).ready(function() {
+      $('[data-toggle="popover"]').popover({
+        html: true,
+        content: function() {
+          return $('#primary-popover-content').html();
+        }
+      });
+    });
+  </script>
   <!-- <script type="text/javascript" src="<?= base_url() ?>assets\pages\dashboard\custom-dashboard.js"></script> -->
   <script type="text/javascript" src="<?= base_url() ?>assets\js\script.min.js"></script>
 
@@ -407,6 +431,40 @@
           text: '<?= session("danger") ?>'
         })
       <?php } ?>
+    });
+  </script>
+
+  <!-- datatable -->
+  <script script>
+    $(document).ready(function() {
+      $('[data-toggle="tooltip"]').tooltip();
+      $('#datatable-scroll').DataTable({
+        scrollY: 400,
+        deferRender: true,
+        scroller: true,
+        layout: {
+          topStart: {
+            buttons: [{
+                extend: 'pdf',
+                className: 'btn-inverse'
+              },
+              {
+                extend: 'print',
+                className: 'btn-inverse'
+              },
+              {
+                extend: 'excel',
+                className: 'btn-inverse'
+              },
+              {
+                extend: 'colvis',
+                className: 'btn-inverse'
+              }
+            ]
+          }
+        }
+      });
+      // $('#datatable-no-scroll').DataTable();
     });
   </script>
 </body>

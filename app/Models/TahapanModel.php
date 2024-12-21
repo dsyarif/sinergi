@@ -4,15 +4,15 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class IndiTujuanRenstraModel extends Model
+class TahapanModel extends Model
 {
-    protected $table            = 'tb_renstra_indi_tujuan';
-    protected $primaryKey       = 'id_indi_tujuan_renstra';
+    protected $table            = 'tb_tahapan';
+    protected $primaryKey       = 'id_tahapan';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_tujuan', 'no_indikator', 'uraian_indikator', 'iku_kota_rpjmd', 'kondisi_awal', 'target_tujuan_th1', 'target_tujuan_th2', 'target_tujuan_th3', 'target_tujuan_th4', 'target_tujuan_th5', 'target_tujuan_th6', 'kondisi_akhir', 'satuan', 'formulasi', 'keterangan', 'kode_opd'];
+    protected $allowedFields    = ['nama_tahapan', 'tgl_mulai', 'tgl_selesai', 'jenis', 'status'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

@@ -13,7 +13,7 @@ class IndiTujuanRenstra extends BaseController
     $data = array(
       'title'       => 'Indikator Tujuan - Rencana Strategis',
       'tujuan_renstra'   => $tujuan_renstra,
-      'inditujuan'      => $this->inditujuanrenstra->join('tb_tujuan_renstra', 'tb_tujuan_renstra.id_tujuan_renstra = tb_indi_tujuan_renstra.id_tujuan')->orderBy('no_indikator', 'ASC')->where('tb_tujuan_renstra.id_tujuan_renstra', $id)->findAll(),
+      'inditujuan'      => $this->inditujuanrenstra->join('tb_renstra_tujuan', 'tb_renstra_tujuan.id_tujuan_renstra = tb_renstra_indi_tujuan.id_tujuan')->orderBy('no_indikator', 'ASC')->where('tb_renstra_tujuan.id_tujuan_renstra', $id)->findAll(),
     );
 
     return view('admin/renstra/indi_tujuan_renstra_admin', $data);
