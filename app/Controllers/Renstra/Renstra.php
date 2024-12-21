@@ -12,7 +12,7 @@ class Renstra extends BaseController
     $data = array(
       'title'       => 'Rencana Strategis',
       'rpjmd'       => $this->rpjmd->orderBy('th_awal_rpjmd', 'Desc')->findAll(),
-      'opd'         => $this->opd->orderBy('kode_opd', 'ASC')->where('unit =', '')->findAll(),
+      'opd'         => $this->opd->orderBy('kode_opd', 'ASC')->findAll(),
     );
 
     return view('admin/renstra/renstra_admin', $data);
