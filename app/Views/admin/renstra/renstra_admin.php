@@ -78,9 +78,16 @@
                             <td class="text-center"><?= $o['kode_opd']; ?></td>
                             <td><?= $o['singkatan']; ?></td>
                             <td class="text-center">
-                              <a href="<?= base_url() ?>tujuan-renstra/add/<?= $o['kode_opd']; ?>" class="btn hor-grd btn-grd-inverse btn-sm">
+                              <?php if (!empty($o['unit'])): ?>
+                                <a  href="#" class="btn hor-grd btn-grd-inverse btn-sm">
                                 <?= $jml_tujuan; ?> Tujuan
                               </a>
+                              <?php else: ?>
+                                <a href="<?= base_url() ?>tujuan-renstra/add/<?= $o['kode_opd']; ?>" class="btn hor-grd btn-grd-inverse btn-sm">
+                                <?= $jml_tujuan; ?> Tujuan
+                              </a>
+                              <?php endif ?>
+                             
                             </td>
                             <td class="text-center">
                               <a href="<?= base_url() ?>sasaran-renstra/add/<?= $o['kode_opd']; ?>" class="btn hor-grd btn-grd-inverse btn-sm">
