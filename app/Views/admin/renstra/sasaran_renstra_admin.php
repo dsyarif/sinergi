@@ -8,6 +8,15 @@
       <div class="page-wrapper">
         <!-- Page-header start -->
         <div class="page-header">
+        <div class="card text-center">
+            <div class="card-block">
+              <button class="btn btn-out-dashed btn-primary btn-square mb-2">Tujuan</button>
+              <button class="btn btn-out-dashed btn-secondary btn-square mb-2">Sasaran</button>
+              <button class="btn btn-out-dashed btn-secondary btn-square mb-2">Program</button>
+              <button class="btn btn-out-dashed btn-secondary btn-square mb-2">Kegiatan</button>
+              <button class="btn btn-out-dashed btn-secondary btn-square mb-2">Sub Kegiatan</button>
+            </div>
+          </div>
           <div class="row align-items-end">
             <div class="col-xl-10">
               <div class="page-header-title">
