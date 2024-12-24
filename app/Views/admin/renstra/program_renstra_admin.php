@@ -64,7 +64,7 @@ $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->get
                       </thead>
                       <tbody>
                         <?php foreach ($program as $p):
-                          $is_prog    = $db->table('tb_renstra_is_prog')->where(['kode_opd' => $kode_opd, 'tb_renstra_is_prog.kode_program' => $p['kode_program']])->get()->getResultArray();
+                          $is_prog    = $db->table('tb_renstra_is_prog')->where(['kode_opd' => $kode_opd])->get()->getResultArray();
                           // dd($is_prog);
                         ?>
                           <tr style="background-color: #01A9AC; color: white;">
@@ -72,10 +72,15 @@ $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->get
                             <td><?= $p['nama_bidang']; ?></td>
                           </tr>
                           <?php foreach ($is_prog as $i): ?>
-                            <tr>
-                              <td><?= $i['kode_program']; ?></td>
-                              <td><?= $i['kode_program']; ?></td>
-                            </tr>
+                            <?php if ($p['kode_bidang'] == substr($i['kode_program'], 0, -3)):
+                              $nama_bidang = $db->table('tb_master')->where('kode_program', $i['kode_program'])->get()->getRowArray();
+                            ?>
+
+                              <tr>
+                                <td><?= $i['kode_program']; ?></td>
+                                <td><?= $nama_bidang['nama_program']; ?></td>
+                              </tr>
+                            <?php endif ?>
                           <?php endforeach ?>
                         <?php endforeach ?>
                       </tbody>
