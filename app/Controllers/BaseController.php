@@ -5,10 +5,13 @@ namespace App\Controllers;
 use App\Controllers\Renstra\TujuanRenstra;
 use App\Models\IndiSasaranRenstraModel;
 use App\Models\IndiTujuanRenstraModel;
+use App\Models\MasterModel;
 use App\Models\PeriodeRpjpd;
 use App\Models\RpjpdModel;
 use App\Models\RpjmdModel;
 use App\Models\OpdModel;
+use App\Models\RenstraBidangOpdModel;
+use App\Models\RenstraIsProgModel;
 use App\Models\SasaranRenstraModel;
 use App\Models\TahapanModel;
 use App\Models\TujuanRenstraModel;
@@ -56,7 +59,8 @@ abstract class BaseController extends Controller
     /**
      * @return void
      */
-    protected $rpjpd, $validation, $rpjmd, $opd, $tujuanrenstra, $inditujuanrenstra, $tahapan, $sasaranrenstra, $indisasaranrenstra;
+    protected $rpjpd, $validation, $rpjmd, $opd, $tahapan;
+    protected $tujuanrenstra, $inditujuanrenstra,  $sasaranrenstra, $indisasaranrenstra, $master, $renstrabidangopd, $renstraisprog;
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
     {
         // Do Not Edit This Line
@@ -65,11 +69,15 @@ abstract class BaseController extends Controller
         $this->rpjmd              = new RpjmdModel();
         $this->rpjpd              = new RpjpdModel();
         $this->opd                = new OpdModel();
-        $this->tujuanrenstra      = new TujuanRenstraModel();
-        $this->inditujuanrenstra  = new IndiTujuanRenstraModel();
         $this->tahapan            = new TahapanModel();
-        $this->sasaranrenstra     = new SasaranRenstraModel();
-        $this->indisasaranrenstra     = new IndiSasaranRenstraModel();
+
+        $this->tujuanrenstra        = new TujuanRenstraModel();
+        $this->inditujuanrenstra    = new IndiTujuanRenstraModel();
+        $this->sasaranrenstra       = new SasaranRenstraModel();
+        $this->indisasaranrenstra   = new IndiSasaranRenstraModel();
+        $this->renstrabidangopd     = new RenstraBidangOpdModel();
+        $this->master               = new MasterModel();
+        $this->renstraisprog        = new RenstraIsProgModel();
 
         // Preload any models, libraries, etc, here.
 

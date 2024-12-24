@@ -1,6 +1,17 @@
 <?= $this->extend('admin/template'); ?>
 
 <?= $this->section('content'); ?>
+<?php
+$db         = \Config\Database::connect();
+$ses_rpjmd  = session()->get('rpjmd');
+if (!empty($ses_rpjmd)) {
+  $d_rpjmd    = $db->table('tb_rpjmd')->where('id_rpjmd', $ses_rpjmd)->get()->getRowArray();
+} else {
+  $d_rpjmd    = $db->table('tb_rpjmd')->where('status_rpjmd', 'Aktif')->get()->getRowArray();
+}
+
+$opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->getRowArray();
+?>
 <div class="pcoded-content">
   <div class="pcoded-inner-content">
     <!-- Main-body start -->
@@ -8,31 +19,12 @@
       <div class="page-wrapper">
         <!-- Page-header start -->
         <div class="page-header">
-          <div class="card text-center">
-            <div class="card-block">
-              <button class="btn btn-out-dashed btn-primary btn-square mb-2">Tujuan</button>
-              <button class="btn btn-out-dashed btn-secondary btn-square mb-2">Sasaran</button>
-              <button class="btn btn-out-dashed btn-secondary btn-square mb-2">Program</button>
-              <button class="btn btn-out-dashed btn-secondary btn-square mb-2">Kegiatan</button>
-              <button class="btn btn-out-dashed btn-secondary btn-square mb-2">Sub Kegiatan</button>
-            </div>
-          </div>
-
+          <?= $this->include('admin/renstra/menu_renstra_admin') ?>
           <div class="row align-items-end">
             <div class="col-xl-10">
               <div class="page-header-title">
                 <div class="d-inline">
-                  <?php
-                  $db         = \Config\Database::connect();
-                  $ses_rpjmd  = session()->get('rpjmd');
-                  if (!empty($ses_rpjmd)) {
-                    $d_rpjmd    = $db->table('tb_rpjmd')->where('id_rpjmd', $ses_rpjmd)->get()->getRowArray();
-                  } else {
-                    $d_rpjmd    = $db->table('tb_rpjmd')->where('status_rpjmd', 'Aktif')->get()->getRowArray();
-                  }
 
-                  $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->getRowArray();
-                  ?>
                   <h4>Tujuan - Renstra (<?= $opd['singkatan']; ?>)</h4>
                 </div>
               </div>
@@ -100,7 +92,6 @@
 
                           <tr>
                             <!-- tombol aksi tujuan -->
-
                             <td class="text-center" style="vertical-align: middle;" rowspan="<?= $jml_indi_tujuan_2 + 1; ?>"><?= $t['kode_tujuan']; ?></td>
                             <td rowspan="<?= $jml_indi_tujuan_2 + 1; ?>" style="vertical-align: middle;"><?= $t['uraian_tujuan']; ?></td>
                             <?php if ($t['status_rpjmd'] == 'Aktif'): ?>
@@ -120,7 +111,7 @@
                               $data_indi_tujuan_1 = $db->table('tb_renstra_indi_tujuan')->where(['id_indi_tujuan_renstra' => $indi_tujuan_1['id_indi_tujuan_renstra']])->get()->getRowArray();
                               ?>
 
-                              <!-- Modal edit indi Tujuan 1 -->
+                              <!-- Modal edit indi Tujuan baris 1 -->
                               <div class="modal fade" id="edit_indi_<?= $indi_tujuan_1['id_indi_tujuan_renstra']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                   <div class="modal-content">
@@ -153,48 +144,54 @@
 
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Uraian Indikator Tujuan</label>
-                                            <input type="text" name="uraian_indikator" class="form-control" value="<?= $data_indi_tujuan_1['uraian_indikator']; ?>" required placeholder="Input Uraian Tujuan">
+                                            <textarea name="uraian_indikator" class="form-control" required placeholder="Input Uraian Tujuan"><?= $data_indi_tujuan_1['uraian_indikator']; ?></textarea>
                                             <span class="help-block text-danger"></span>
                                           </div>
 
                                           <div class="mb-3">
-                                            <label class="form-label font-weight-bold">Kondisi Awal</label>
-                                            <input type="number" name="kondisi_awal" class="form-control" value="<?= $data_indi_tujuan_1['kondisi_awal']; ?>" required placeholder="Input Kondisi Awal">
-                                            <span class="help-block text-danger"></span>
+                                            <label class="form-label font-weight-bold text-center">Kondisi Awal</label>
                                           </div>
+                                          <div class="form-group row">
+                                            <div class="col-sm-6">
+                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] - 1; ?></label>
+                                              <input type="number" value="<?= $data_indi_tujuan_1['kondisi_awal']; ?>" name="kondisi_awal" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] - 1; ?>">
+                                            </div>
+                                            <div class="col-sm-6">
+                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd']; ?></label>
+                                              <input type="number" name="target_tujuan_th1" class="form-control" value="<?= $data_indi_tujuan_1['target_tujuan_th1']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd']; ?>">
+                                            </div>
+                                          </div>
+
+
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold text-center">Target</label>
                                           </div>
                                           <div class="form-group row">
                                             <div class="col-sm-6">
-                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] - 1; ?></label>
-                                              <input type="number" name="target_tujuan_th1" class="form-control" value="<?= $data_indi_tujuan_1['target_tujuan_th1']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] - 1; ?>">
-                                            </div>
-                                            <div class="col-sm-6">
-                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd']; ?></label>
-                                              <input type="number" name="target_tujuan_th2" class="form-control" value="<?= $data_indi_tujuan_1['target_tujuan_th2']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd']; ?>">
-                                            </div>
-                                          </div>
-
-                                          <div class="form-group row">
-                                            <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 1; ?></label>
-                                              <input type="number" name="target_tujuan_th3" class="form-control" value="<?= $data_indi_tujuan_1['target_tujuan_th3']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 1; ?>">
+                                              <input type="number" name="target_tujuan_th2" class="form-control" value="<?= $data_indi_tujuan_1['target_tujuan_th2']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 1; ?>">
                                             </div>
                                             <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 2; ?></label>
-                                              <input type="number" name="target_tujuan_th4" class="form-control" value="<?= $data_indi_tujuan_1['target_tujuan_th4']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 2; ?>">
+                                              <input type="number" name="target_tujuan_th3" class="form-control" value="<?= $data_indi_tujuan_1['target_tujuan_th3']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 2; ?>">
                                             </div>
                                           </div>
 
                                           <div class="form-group row">
                                             <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 3; ?></label>
-                                              <input type="number" name="target_tujuan_th5" class="form-control" value="<?= $data_indi_tujuan_1['target_tujuan_th5']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 3; ?>">
+                                              <input type="number" name="target_tujuan_th4" class="form-control" value="<?= $data_indi_tujuan_1['target_tujuan_th4']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 3; ?>">
                                             </div>
                                             <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 4; ?></label>
-                                              <input type="number" name="target_tujuan_th6" class="form-control" value="<?= $data_indi_tujuan_1['target_tujuan_th6']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 4; ?>">
+                                              <input type="number" name="target_tujuan_th5" class="form-control" value="<?= $data_indi_tujuan_1['target_tujuan_th5']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 4; ?>">
+                                            </div>
+                                          </div>
+
+                                          <div class="form-group row">
+                                            <div class="col-sm-6">
+                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 5; ?></label>
+                                              <input type="number" name="target_tujuan_th6" class="form-control" value="<?= $data_indi_tujuan_1['target_tujuan_th6']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 5; ?>">
                                             </div>
                                           </div>
 
@@ -212,13 +209,13 @@
 
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Formulasi</label>
-                                            <input type="text" name="formulasi" class="form-control" value="<?= $data_indi_tujuan_1['formulasi']; ?>" required placeholder="Input Formulasi">
+                                            <textarea name="formulasi" class="form-control" required rows="2" placeholder="Input Formulasi"><?= $data_indi_tujuan_1['formulasi']; ?></textarea>
                                             <span class="help-block text-danger"></span>
                                           </div>
 
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Keterangan</label>
-                                            <input type="text" name="keterangan" class="form-control" value="<?= $data_indi_tujuan_1['keterangan']; ?>" required placeholder="Input Keterangan">
+                                            <textarea name="keterangan" class="form-control" required rows="2" placeholder="Input Keterangan"><?= $data_indi_tujuan_1['keterangan']; ?></textarea>
                                             <span class="help-block text-danger"></span>
                                           </div>
                                           <?php if ($d_rpjmd['status_rpjmd'] == 'Aktif'): ?>
@@ -332,16 +329,9 @@
 
                                       <div class="mb-3">
                                         <label class="form-label font-weight-bold">Uraian Indikator Tujuan</label>
-                                        <input type="text" name="uraian_indikator" class="form-control" required placeholder="Input Uraian Tujuan">
+                                        <textarea name="uraian_indikator" rows="2" class="form-control" required placeholder="Input Uraian Tujuan"></textarea>
                                         <span class="help-block text-danger"></span>
                                       </div>
-
-                                      <!-- <div class="mb-3">
-                                        <label class="form-label font-weight-bold">Kondisi Awal</label>
-                                        <input type="number" name="kondisi_awal" class="form-control" required placeholder="Input Kondisi Awal">
-                                        <span class="help-block text-danger"></span>
-                                      </div> -->
-
 
                                       <div class="mb-3">
                                         <label class="form-label font-weight-bold text-center">Kondisi Awal</label>
@@ -402,13 +392,13 @@
 
                                       <div class="mb-3">
                                         <label class="form-label font-weight-bold">Formulasi</label>
-                                        <input type="text" name="formulasi" class="form-control" required placeholder="Input Formulasi">
+                                        <textarea name="formulasi" class="form-control" rows="2" required placeholder="Input Formulasi"></textarea>
                                         <span class="help-block text-danger"></span>
                                       </div>
 
                                       <div class="mb-3">
                                         <label class="form-label font-weight-bold">Keterangan</label>
-                                        <input type="text" name="keterangan" class="form-control" required placeholder="Input Keterangan">
+                                        <textarea name="keterangan" class="form-control" rows="2" required placeholder="Input Keterangan"></textarea>
                                         <span class="help-block text-danger"></span>
                                       </div>
 
@@ -448,7 +438,7 @@
                               $data_indi_tujuan_2 = $db->table('tb_renstra_indi_tujuan')->where(['id_indi_tujuan_renstra' => $in['id_indi_tujuan_renstra']])->get()->getRowArray();
                               ?>
 
-                              <!-- Modal edit indi Tujuan 1 -->
+                              <!-- Modal edit indi Tujuan baris ke 2 dan seterusnya -->
                               <div class="modal fade" id="edit_indi_<?= $in['id_indi_tujuan_renstra']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                   <div class="modal-content">
@@ -481,48 +471,54 @@
 
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Uraian Indikator Tujuan</label>
-                                            <input type="text" name="uraian_indikator" class="form-control" value="<?= $data_indi_tujuan_2['uraian_indikator']; ?>" required placeholder="Input Uraian Tujuan">
+                                            <textarea name="uraian_indikator" required class="form-control" placeholder="Input Uraian Tujuan" rows="2"><?= $data_indi_tujuan_2['uraian_indikator']; ?></textarea>
                                             <span class="help-block text-danger"></span>
                                           </div>
 
                                           <div class="mb-3">
-                                            <label class="form-label font-weight-bold">Kondisi Awal</label>
-                                            <input type="number" name="kondisi_awal" class="form-control" value="<?= $data_indi_tujuan_2['kondisi_awal']; ?>" required placeholder="Input Kondisi Awal">
-                                            <span class="help-block text-danger"></span>
+                                            <label class="form-label font-weight-bold text-center">Kondisi Awal</label>
                                           </div>
+                                          <div class="form-group row">
+                                            <div class="col-sm-6">
+                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] - 1; ?></label>
+                                              <input type="number" value="<?= $data_indi_tujuan_2['kondisi_awal']; ?>" name="kondisi_awal" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] - 1; ?>">
+                                            </div>
+                                            <div class="col-sm-6">
+                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd']; ?></label>
+                                              <input type="number" name="target_tujuan_th1" class="form-control" value="<?= $data_indi_tujuan_2['target_tujuan_th1']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd']; ?>">
+                                            </div>
+                                          </div>
+
+
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold text-center">Target</label>
                                           </div>
                                           <div class="form-group row">
                                             <div class="col-sm-6">
-                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] - 1; ?></label>
-                                              <input type="number" name="target_tujuan_th1" class="form-control" value="<?= $data_indi_tujuan_2['target_tujuan_th1']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] - 1; ?>">
-                                            </div>
-                                            <div class="col-sm-6">
-                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd']; ?></label>
-                                              <input type="number" name="target_tujuan_th2" class="form-control" value="<?= $data_indi_tujuan_2['target_tujuan_th2']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd']; ?>">
-                                            </div>
-                                          </div>
-
-                                          <div class="form-group row">
-                                            <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 1; ?></label>
-                                              <input type="number" name="target_tujuan_th3" class="form-control" value="<?= $data_indi_tujuan_2['target_tujuan_th3']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 1; ?>">
+                                              <input type="number" name="target_tujuan_th2" class="form-control" value="<?= $data_indi_tujuan_2['target_tujuan_th2']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 1; ?>">
                                             </div>
                                             <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 2; ?></label>
-                                              <input type="number" name="target_tujuan_th4" class="form-control" value="<?= $data_indi_tujuan_2['target_tujuan_th4']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 2; ?>">
+                                              <input type="number" name="target_tujuan_th3" class="form-control" value="<?= $data_indi_tujuan_2['target_tujuan_th3']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 2; ?>">
                                             </div>
                                           </div>
 
                                           <div class="form-group row">
                                             <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 3; ?></label>
-                                              <input type="number" name="target_tujuan_th5" class="form-control" value="<?= $data_indi_tujuan_2['target_tujuan_th5']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 3; ?>">
+                                              <input type="number" name="target_tujuan_th4" class="form-control" value="<?= $data_indi_tujuan_2['target_tujuan_th4']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 3; ?>">
                                             </div>
                                             <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 4; ?></label>
-                                              <input type="number" name="target_tujuan_th6" class="form-control" value="<?= $data_indi_tujuan_2['target_tujuan_th6']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 4; ?>">
+                                              <input type="number" name="target_tujuan_th5" class="form-control" value="<?= $data_indi_tujuan_2['target_tujuan_th5']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 4; ?>">
+                                            </div>
+                                          </div>
+
+                                          <div class="form-group row">
+                                            <div class="col-sm-6">
+                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 5; ?></label>
+                                              <input type="number" name="target_tujuan_th6" class="form-control" value="<?= $data_indi_tujuan_2['target_tujuan_th6']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 5; ?>">
                                             </div>
                                           </div>
 
@@ -540,13 +536,13 @@
 
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Formulasi</label>
-                                            <input type="text" name="formulasi" class="form-control" value="<?= $data_indi_tujuan_2['formulasi']; ?>" required placeholder="Input Formulasi">
+                                            <textarea name="formulasi" class="form-control" required rows="2" placeholder="Input Formulasi"><?= $data_indi_tujuan_2['formulasi']; ?></textarea>
                                             <span class="help-block text-danger"></span>
                                           </div>
 
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Keterangan</label>
-                                            <input type="text" name="keterangan" class="form-control" value="<?= $data_indi_tujuan_2['keterangan']; ?>" required placeholder="Input Keterangan">
+                                            <textarea name="keterangan" class="form-control" required rows="2" placeholder="Input Keterangan"><?= $data_indi_tujuan_2['keterangan']; ?></textarea>
                                             <span class="help-block text-danger"></span>
                                           </div>
                                           <?php if ($d_rpjmd['status_rpjmd'] == 'Aktif'): ?>

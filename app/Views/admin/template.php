@@ -33,6 +33,12 @@
   <!-- <link href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.1.2/b-3.1.0/b-html5-3.1.0/fc-5.0.1/fh-4.0.1/r-3.0.2/datatables.min.css" rel="stylesheet"> -->
   <link href="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.1.7/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/r-3.0.3/sc-2.4.3/datatables.min.css" rel="stylesheet">
 
+  <!-- Select 2 css -->
+  <link rel="stylesheet" href="<?= base_url() ?>bower_components\select2\css\select2.min.css">
+  <!-- Multi Select css -->
+  <link rel="stylesheet" type="text/css" href="<?= base_url() ?>bower_components\bootstrap-multiselect\css\bootstrap-multiselect.css">
+  <link rel="stylesheet" type="text/css" href="<?= base_url() ?>bower_components\multiselect\css\multi-select.css">
+
 
   <!-- Style.css -->
   <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets\css\style.css">
@@ -364,6 +370,16 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- jquery slimscroll js -->
   <script type="text/javascript" src="<?= base_url() ?>bower_components\jquery-slimscroll\js\jquery.slimscroll.js"></script>
+
+  <!-- Select 2 js -->
+  <script type="text/javascript" src="<?= base_url() ?>bower_components\select2\js\select2.full.min.js"></script>
+  <!-- Multiselect js -->
+  <script type="text/javascript" src="<?= base_url() ?>bower_components\bootstrap-multiselect\js\bootstrap-multiselect.js"></script>
+  <script type="text/javascript" src="<?= base_url() ?>bower_components\multiselect\js\jquery.multi-select.js"></script>
+  <script type="text/javascript" src="<?= base_url() ?>assets\js\jquery.quicksearch.js"></script>
+
+  <script type="text/javascript" src="<?= base_url() ?>assets\pages\advance-elements\select2-custom.js"></script>
+
   <!-- year-picker -->
   <script>
     $(function() {

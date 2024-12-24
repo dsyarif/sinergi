@@ -61,6 +61,7 @@ $routes->group('tujuan-renstra', static function ($routes) {
   $routes->add('set-rpjmd/(:num)', 'Renstra\TujuanRenstra::set_rpjmd/$1');
 });
 
+// Sasaran Renstra
 $routes->group('sasaran-renstra', static function ($routes) {
   $routes->add('/', 'Renstra\SasaranRenstra');
   $routes->add('add/(:any)', 'Renstra\SasaranRenstra::add/$1');
@@ -73,6 +74,10 @@ $routes->group('sasaran-renstra', static function ($routes) {
   $routes->add('delete-indi/(:num)', 'Renstra\SasaranRenstra::delete_indi/$1');
 
   $routes->add('set-rpjmd/(:num)', 'Renstra\SasaranRenstra::set_rpjmd/$1');
+
+  $routes->add('choose-program', 'Renstra\SasaranRenstra::choose_program');
+  $routes->add('edit-choose-program', 'Renstra\SasaranRenstra::edit_choose_program');
+  $routes->add('delete-is-prog/(:num)/(:any)', 'Renstra\SasaranRenstra::delete_is_prog/$1/$2');
 });
 
 // Indikator Tujuan Renstra
@@ -82,4 +87,10 @@ $routes->group('indi-tujuan-renstra', static function ($routes) {
   $routes->add('save', 'Renstra\IndiTujuanRenstra::save');
   $routes->add('update', 'Renstra\IndiTujuanRenstra::update');
   $routes->add('delete/(:num)', 'Renstra\IndiTujuanRenstra::delete/$1');
+});
+
+// Program Renstra
+$routes->group('program-renstra', static function ($routes) {
+  $routes->add('/', 'Renstra\TujuanRenstra');
+  $routes->add('add/(:any)', 'Renstra\ProgramRenstra::add/$1');
 });

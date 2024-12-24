@@ -55,8 +55,6 @@ class SasaranRenstra extends BaseController
     } else {
       session()->setFlashdata('warning', 'Data Gagal Disimpan, Pastikan Ada RPJMD yang Aktif');
     }
-
-
     return redirect()->to('sasaran-renstra/add/' . $this->request->getPost('kode_opd') . '');
   }
 
@@ -79,6 +77,10 @@ class SasaranRenstra extends BaseController
 
   public function delete($id)
   {
+    $is_renstra = $this->indisasaranrenstra->where('id_sasaran_renstra', $id)->findAll();
+    foreach ($is_renstra as $is) {
+      $this->renstraisprog->where('id_is_renstra', $is['id_is_renstra'])->delete();
+    }
     $this->indisasaranrenstra->where('id_sasaran_renstra', $id)->delete();
     $this->sasaranrenstra->delete($id);
     return $this->response->setJSON([
@@ -139,10 +141,67 @@ class SasaranRenstra extends BaseController
 
   public function delete_indi($id)
   {
+    $this->renstraisprog->where('id_is_renstra', $id)->delete();
     $this->indisasaranrenstra->delete($id);
     return $this->response->setJSON([
       'error' => false,
       'message' => "Data Berhasil Dihapus"
+    ]);
+  }
+
+  public function choose_program()
+  {
+    $rpjmd = $this->rpjmd->where('status_rpjmd', 'Aktif')->first();
+    $pilihan = $this->request->getPost('kode_program');
+
+    if (!empty($rpjmd)) {
+      foreach ($pilihan as $p) {
+        $data = [
+          'id_is_renstra'     => $this->request->getPost('id_is_renstra'),
+          'kode_program'      => $p,
+          'kode_opd'          => $this->request->getPost('kode_opd'),
+          'id_rpjmd'          => $rpjmd['id_rpjmd'],
+        ];
+        $this->renstraisprog->save($data);
+      }
+      session()->setFlashdata('success', 'Program Berhasil Dipilih');
+    } else {
+      session()->setFlashdata('warning', 'Data Gagal Disimpan, Pastikan Ada RPJMD yang Aktif');
+    }
+    return redirect()->to('sasaran-renstra/add/' . $this->request->getPost('kode_opd') . '');
+  }
+
+  public function edit_choose_program()
+  {
+    $this->renstraisprog->where('id_is_renstra', $this->request->getPost('id_is_renstra'))->delete();
+
+    $rpjmd = $this->rpjmd->where('status_rpjmd', 'Aktif')->first();
+
+    $pilihan = $this->request->getPost('kode_program');
+
+    if (!empty($rpjmd)) {
+      foreach ($pilihan as $p) {
+        $data = [
+          'id_is_renstra'     => $this->request->getPost('id_is_renstra'),
+          'kode_program'      => $p,
+          'kode_opd'          => $this->request->getPost('kode_opd'),
+          'id_rpjmd'          => $rpjmd['id_rpjmd'],
+        ];
+        $this->renstraisprog->save($data);
+      }
+      session()->setFlashdata('success', 'Program Berhasil Dipilih');
+    } else {
+      session()->setFlashdata('warning', 'Data Gagal Disimpan, Pastikan Ada RPJMD yang Aktif');
+    }
+    return redirect()->to('sasaran-renstra/add/' . $this->request->getPost('kode_opd') . '');
+  }
+
+  public function delete_is_prog($id)
+  {
+    $this->renstraisprog->where('id_is_renstra', $id)->delete();
+    return $this->response->setJSON([
+      'error' => false,
+      'message' => "Program Renstra Berhasil Dihapus"
     ]);
   }
 }

@@ -16,15 +16,17 @@ class TujuanRenstra extends BaseController
     } else {
       $tujuan = $this->tujuanrenstra->join('tb_opd', 'tb_renstra_tujuan.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_tujuan.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['status_rpjmd' => 'Aktif', 'tb_renstra_tujuan.kode_opd' => $kode])->orderBy('kode_tujuan', 'ASC')->findAll();
     }
-
     $data = array(
       'title'       => 'Tujuan - Rencana Strategis',
       'kode_opd'    => $kode,
       'rpjmd'       => $this->rpjmd->orderBy('th_awal_rpjmd', 'Desc')->findAll(),
       'tujuan'      => $tujuan,
     );
-
     return view('admin/renstra/tujuan_renstra_admin', $data);
+    // } else {
+    //   session()->setFlashdata('warning', 'Data yang anda cari tidak ditemukan');
+    //   return redirect()->to('renstra');
+    // }
   }
 
   public function set_rpjmd($id)

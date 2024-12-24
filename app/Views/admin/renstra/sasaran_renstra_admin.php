@@ -1,6 +1,18 @@
 <?= $this->extend('admin/template'); ?>
 
 <?= $this->section('content'); ?>
+<?php
+$uri = current_url(true);
+$db         = \Config\Database::connect();
+$ses_rpjmd  = session()->get('rpjmd');
+if (!empty($ses_rpjmd)) {
+  $d_rpjmd    = $db->table('tb_rpjmd')->where('id_rpjmd', $ses_rpjmd)->get()->getRowArray();
+} else {
+  $d_rpjmd    = $db->table('tb_rpjmd')->where('status_rpjmd', 'Aktif')->get()->getRowArray();
+}
+
+$opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->getRowArray();
+?>
 <div class="pcoded-content">
   <div class="pcoded-inner-content">
     <!-- Main-body start -->
@@ -8,30 +20,12 @@
       <div class="page-wrapper">
         <!-- Page-header start -->
         <div class="page-header">
-        <div class="card text-center">
-            <div class="card-block">
-              <button class="btn btn-out-dashed btn-primary btn-square mb-2">Tujuan</button>
-              <button class="btn btn-out-dashed btn-secondary btn-square mb-2">Sasaran</button>
-              <button class="btn btn-out-dashed btn-secondary btn-square mb-2">Program</button>
-              <button class="btn btn-out-dashed btn-secondary btn-square mb-2">Kegiatan</button>
-              <button class="btn btn-out-dashed btn-secondary btn-square mb-2">Sub Kegiatan</button>
-            </div>
-          </div>
+          <?= $this->include('admin/renstra/menu_renstra_admin') ?>
           <div class="row align-items-end">
             <div class="col-xl-10">
               <div class="page-header-title">
                 <div class="d-inline">
-                  <?php
-                  $db         = \Config\Database::connect();
-                  $ses_rpjmd  = session()->get('rpjmd');
-                  if (!empty($ses_rpjmd)) {
-                    $d_rpjmd    = $db->table('tb_rpjmd')->where('id_rpjmd', $ses_rpjmd)->get()->getRowArray();
-                  } else {
-                    $d_rpjmd    = $db->table('tb_rpjmd')->where('status_rpjmd', 'Aktif')->get()->getRowArray();
-                  }
 
-                  $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->getRowArray();
-                  ?>
                   <h4>Sasaran - Renstra (<?= $opd['singkatan']; ?>)</h4>
                 </div>
               </div>
@@ -114,12 +108,12 @@
                             <?php endif ?>
 
                             <?php if (!empty($indi_sasaran_1)): ?>
-                              <td data-bs-toggle="modal" data-bs-target="#edit_indi_<?= $indi_sasaran_1['id_is_renstra']; ?>"><?= $indi_sasaran_1['uraian_is']; ?></td>
+                              <td data-bs-toggle="modal" data-bs-target="#edit_indi_<?= $indi_sasaran_1['id_is_renstra']; ?>" class="text-primary"><?= $indi_sasaran_1['uraian_is']; ?></td>
                               <?php
                               $data_indi_sasaran_1 = $db->table('tb_renstra_indi_sasaran')->where(['id_is_renstra' => $indi_sasaran_1['id_is_renstra']])->get()->getRowArray();
                               ?>
 
-                              <!-- Modal edit indi Sasaran 1 -->
+                              <!-- Modal edit indi Sasaran baris ke - 1 -->
                               <div class="modal fade" id="edit_indi_<?= $indi_sasaran_1['id_is_renstra']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                   <div class="modal-content">
@@ -138,6 +132,9 @@
                                     <div class="modal-body">
                                       <div class="card">
                                         <div class="card-body">
+                                          <!-- tombol pilih program indikator sasaran pada baris ke 1 -->
+                                          <a class="btn btn-primary btn-block btn-mat mb-2 text-white" data-bs-toggle="modal" data-bs-target="#pilihprogram_<?= $indi_sasaran_1['id_is_renstra']; ?>"><i class="fa-solid fa-list-check"></i> Choose Program</a>
+
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Uraian Sasaran</label>
                                             <p><?= $t['uraian_sasaran']; ?></p>
@@ -152,48 +149,54 @@
 
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Uraian Indikator Sasaran</label>
-                                            <input type="text" name="uraian_is" class="form-control" value="<?= $data_indi_sasaran_1['uraian_is']; ?>" required placeholder="Input Uraian Sasaran">
+                                            <textarea name="uraian_is" class="form-control" required rows="2" placeholder="Input Uraian Indikator Sasaran"><?= $data_indi_sasaran_1['uraian_is']; ?></textarea>
                                             <span class="help-block text-danger"></span>
                                           </div>
 
                                           <div class="mb-3">
-                                            <label class="form-label font-weight-bold">Kondisi Awal</label>
-                                            <input type="number" name="kondisi_awal_is" class="form-control" value="<?= $data_indi_sasaran_1['kondisi_awal_is']; ?>" required placeholder="Input Kondisi Awal">
-                                            <span class="help-block text-danger"></span>
+                                            <label class="form-label font-weight-bold text-center">Kondisi Awal</label>
                                           </div>
+                                          <div class="form-group row">
+                                            <div class="col-sm-6">
+                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] - 1; ?></label>
+                                              <input type="number" value="<?= $data_indi_sasaran_1['kondisi_awal_is']; ?>" name="kondisi_awal_is" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] - 1; ?>">
+                                            </div>
+                                            <div class="col-sm-6">
+                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd']; ?></label>
+                                              <input type="number" name="target_is_th1" class="form-control" value="<?= $data_indi_sasaran_1['target_is_th1']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd']; ?>">
+                                            </div>
+                                          </div>
+
+
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold text-center">Target</label>
                                           </div>
                                           <div class="form-group row">
                                             <div class="col-sm-6">
-                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] - 1; ?></label>
-                                              <input type="number" name="target_is_th1" class="form-control" value="<?= $data_indi_sasaran_1['target_is_th1']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] - 1; ?>">
-                                            </div>
-                                            <div class="col-sm-6">
-                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd']; ?></label>
-                                              <input type="number" name="target_is_th2" class="form-control" value="<?= $data_indi_sasaran_1['target_is_th2']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd']; ?>">
-                                            </div>
-                                          </div>
-
-                                          <div class="form-group row">
-                                            <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 1; ?></label>
-                                              <input type="number" name="target_is_th3" class="form-control" value="<?= $data_indi_sasaran_1['target_is_th3']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 1; ?>">
+                                              <input type="number" name="target_is_th2" class="form-control" value="<?= $data_indi_sasaran_1['target_is_th2']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 1; ?>">
                                             </div>
                                             <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 2; ?></label>
-                                              <input type="number" name="target_is_th4" class="form-control" value="<?= $data_indi_sasaran_1['target_is_th4']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 2; ?>">
+                                              <input type="number" name="target_is_th3" class="form-control" value="<?= $data_indi_sasaran_1['target_is_th3']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 2; ?>">
                                             </div>
                                           </div>
 
                                           <div class="form-group row">
                                             <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 3; ?></label>
-                                              <input type="number" name="target_is_th5" class="form-control" value="<?= $data_indi_sasaran_1['target_is_th5']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 3; ?>">
+                                              <input type="number" name="target_is_th4" class="form-control" value="<?= $data_indi_sasaran_1['target_is_th4']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 3; ?>">
                                             </div>
                                             <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 4; ?></label>
-                                              <input type="number" name="target_is_th6" class="form-control" value="<?= $data_indi_sasaran_1['target_is_th6']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 4; ?>">
+                                              <input type="number" name="target_is_th5" class="form-control" value="<?= $data_indi_sasaran_1['target_is_th5']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 4; ?>">
+                                            </div>
+                                          </div>
+
+                                          <div class="form-group row">
+                                            <div class="col-sm-6">
+                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 5; ?></label>
+                                              <input type="number" name="target_is_th6" class="form-control" value="<?= $data_indi_sasaran_1['target_is_th6']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 5; ?>">
                                             </div>
                                           </div>
 
@@ -211,13 +214,13 @@
 
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Formulasi</label>
-                                            <input type="text" name="formulasi_is" class="form-control" value="<?= $data_indi_sasaran_1['formulasi_is']; ?>" required placeholder="Input Formulasi">
+                                            <textarea name="formulasi_is" rows="3" class="form-control" required placeholder="Input Formulasi"><?= $data_indi_sasaran_1['formulasi_is']; ?></textarea>
                                             <span class="help-block text-danger"></span>
                                           </div>
 
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Keterangan</label>
-                                            <input type="text" name="keterangan_is" class="form-control" value="<?= $data_indi_sasaran_1['keterangan_is']; ?>" required placeholder="Input Keterangan">
+                                            <textarea name="keterangan_is" rows="3" class="form-control" required placeholder="Input Keterangan"><?= $data_indi_sasaran_1['keterangan_is']; ?></textarea>
                                             <span class="help-block text-danger"></span>
                                           </div>
                                           <?php if ($d_rpjmd['status_rpjmd'] == 'Aktif'): ?>
@@ -233,6 +236,95 @@
                                   </div>
                                   <!-- <div class="modal-footer d-flex justify-content-center"> -->
                                   <?= form_close(); ?>
+                                </div>
+                              </div>
+
+                              <!-- Modal Pilih Program Indikator Sasaran Baris ke 1 -->
+                              <div class="modal fade" id="pilihprogram_<?= $indi_sasaran_1['id_is_renstra']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title font-weight-bold" id="exampleModalLabel" id="modal-title">Indikator : <?= $indi_sasaran_1['uraian_is']; ?></h5>
+                                      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                    </div>
+                                    <?php
+                                    // menampilkan seluruh program pada opd yang dipilih
+                                    $program        = $db->table('tb_master')->join('tb_renstra_bidang_opd', 'tb_master.kode_bidang=tb_renstra_bidang_opd.kode_bidang')->join('tb_opd', 'tb_renstra_bidang_opd.kode_opd=tb_opd.kode_opd')->where('tb_opd.kode_opd', $opd['kode_opd'])->groupBy('kode_program')->get()->getResultArray();
+                                    //mngecek jumlah program sudah dipilih
+                                    $cek_program    = $db->table('tb_renstra_is_prog')->where('id_is_renstra', $indi_sasaran_1['id_is_renstra'])->get()->getNumRows();
+                                    // menampilkan program yang sudah dipilih guna edit data
+                                    $data_is_prog   = $db->table('tb_renstra_is_prog')->where('id_is_renstra', $indi_sasaran_1['id_is_renstra'])->get()->getResultArray();
+
+                                    $data_is_prog_array = [];
+                                    foreach ($data_is_prog as $kt) {
+                                      $data_is_prog_array[$kt['kode_program']] = true;
+                                    }
+
+                                    $cek_is_prog = $db->table('tb_renstra_is_prog')->where(['id_is_renstra !=' => $indi_sasaran_1['id_is_renstra'], 'kode_opd' => $opd['kode_opd']])->get()->getResultArray();
+                                    $data_cek_is_prog_array = [];
+                                    foreach ($cek_is_prog as $c) {
+                                      $data_cek_is_prog_array[$c['kode_program']] = true;
+                                    }
+                                    ?>
+
+                                    <?php if ($cek_program == 0): ?>
+                                      <?= form_open('sasaran-renstra/choose-program'); ?>
+                                      <?= csrf_field() ?>
+                                      <div class="modal-body">
+                                        <div class="card">
+                                          <div class="card-body">
+                                            <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
+                                            <input type="hidden" name="id_is_renstra" value="<?= $indi_sasaran_1['id_is_renstra']; ?>">
+                                            <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
+                                            <div class="mb-3">
+                                              <label class="form-label font-weight-bold">Program</label>
+                                              <select class="js-example-basic-multiple col-sm-12 z-index-10" name="kode_program[]" multiple="multiple" required>
+
+                                                <?php foreach ($program as $p): ?>
+                                                  <option value="<?= $p['kode_program']; ?>" <?= isset($data_cek_is_prog_array[$p['kode_program']]) ? 'disabled' : '' ?>><?= $p['kode_program']; ?> - <?= $p['nama_program']; ?></option>
+                                                <?php endforeach ?>
+                                              </select>
+                                              <span class="help-block text-danger"></span>
+                                            </div>
+                                            <div>
+                                              <button type="submit" class="btn btn-inverse btn-block">Simpan Program</button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <?= form_close(); ?>
+                                    <?php else: ?>
+                                      <?= form_open('sasaran-renstra/edit-choose-program'); ?>
+                                      <?= csrf_field() ?>
+                                      <div class="modal-body">
+                                        <div class="card">
+                                          <div class="card-body">
+                                            <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
+                                            <input type="hidden" name="id_is_renstra" value="<?= $indi_sasaran_1['id_is_renstra']; ?>">
+                                            <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
+                                            <div class="mb-3">
+                                              <label class="form-label font-weight-bold">Program</label>
+                                              <select class="js-example-basic-multiple col-sm-12" name="kode_program[]" multiple="multiple" required>
+                                                <?php foreach ($program as $p): ?>
+                                                  <option value="<?= $p['kode_program']; ?>" <?= isset($data_cek_is_prog_array[$p['kode_program']]) ? 'disabled' : '' ?> <?= isset($data_is_prog_array[$p['kode_program']]) ? 'selected' : '' ?>><?= $p['kode_program']; ?> - <?= $p['nama_program']; ?></option>
+                                                <?php endforeach ?>
+                                              </select>
+                                              <span class="help-block text-danger"></span>
+                                            </div>
+                                            <div>
+                                              <button type="submit" class="btn btn-inverse btn-block">Edit Program</button>
+                                              <a onclick="hapusIsProg(`<?= $indi_sasaran_1['id_is_renstra']; ?>`, `<?= $opd['kode_opd']; ?>`, `<?= $indi_sasaran_1['uraian_is']; ?>`)" class="btn btn-danger btn-block text-white">Hapus Semua Program Terpilih</a>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <?= form_close(); ?>
+                                    <?php endif ?>
+
+
+                                  </div>
                                 </div>
                               </div>
 
@@ -344,48 +436,50 @@
 
                                       <div class="mb-3">
                                         <label class="form-label font-weight-bold">Uraian Indikator Sasaran</label>
-                                        <input type="text" name="uraian_is" class="form-control" required placeholder="Input Uraian Sasaran">
+                                        <textarea name="uraian_is" class="form-control" rows="2" required placeholder="Input Uraian Sasaran"></textarea>
                                         <span class="help-block text-danger"></span>
                                       </div>
 
                                       <div class="mb-3">
-                                        <label class="form-label font-weight-bold">Kondisi Awal</label>
-                                        <input type="number" name="kondisi_awal_is" class="form-control" required placeholder="Input Kondisi Awal">
-                                        <span class="help-block text-danger"></span>
+                                        <label class="form-label font-weight-bold text-center">Kondisi Awal</label>
+                                      </div>
+                                      <div class="form-group row">
+                                        <div class="col-sm-6">
+                                          <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] - 1; ?></label>
+                                          <input type="number" name="kondisi_awal_is" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] - 1; ?>">
+                                        </div>
+                                        <div class="col-sm-6">
+                                          <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd']; ?></label>
+                                          <input type="number" name="target_is_th1" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd']; ?>">
+                                        </div>
                                       </div>
                                       <div class="mb-3">
                                         <label class="form-label font-weight-bold text-center">Target</label>
                                       </div>
                                       <div class="form-group row">
                                         <div class="col-sm-6">
-                                          <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] - 1; ?></label>
-                                          <input type="number" name="target_is_th1" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] - 1; ?>">
-                                        </div>
-                                        <div class="col-sm-6">
-                                          <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd']; ?></label>
-                                          <input type="number" name="target_is_th2" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd']; ?>">
-                                        </div>
-                                      </div>
-
-                                      <div class="form-group row">
-                                        <div class="col-sm-6">
                                           <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 1; ?></label>
-                                          <input type="number" name="target_is_th3" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 1; ?>">
+                                          <input type="number" name="target_is_th2" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 1; ?>">
                                         </div>
                                         <div class="col-sm-6">
                                           <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 2; ?></label>
-                                          <input type="number" name="target_is_th4" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 2; ?>">
+                                          <input type="number" name="target_is_th3" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 2; ?>">
                                         </div>
                                       </div>
+
 
                                       <div class="form-group row">
                                         <div class="col-sm-6">
                                           <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 3; ?></label>
-                                          <input type="number" name="target_is_th5" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 3; ?>">
+                                          <input type="number" name="target_is_th4" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 3; ?>">
                                         </div>
                                         <div class="col-sm-6">
                                           <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 4; ?></label>
-                                          <input type="number" name="target_is_th6" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 4; ?>">
+                                          <input type="number" name="target_is_th5" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 4; ?>">
+                                        </div>
+                                        <div class="col-sm-6 mt-3">
+                                          <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 5; ?></label>
+                                          <input type="number" name="target_is_th6" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 5; ?>">
                                         </div>
                                       </div>
 
@@ -403,13 +497,13 @@
 
                                       <div class="mb-3">
                                         <label class="form-label font-weight-bold">Formulasi</label>
-                                        <input type="text" name="formulasi_is" class="form-control" required placeholder="Input Formulasi">
+                                        <textarea name="formulasi_is" rows="3" class="form-control" required placeholder="Input Formulasi"></textarea>
                                         <span class="help-block text-danger"></span>
                                       </div>
 
                                       <div class="mb-3">
                                         <label class="form-label font-weight-bold">Keterangan</label>
-                                        <input type="text" name="keterangan_is" class="form-control" required placeholder="Input Keterangan">
+                                        <textarea name="keterangan_is" rows="3" class="form-control" required placeholder="Input Keterangan"></textarea>
                                         <span class="help-block text-danger"></span>
                                       </div>
 
@@ -429,7 +523,7 @@
                           <?php if ($jml_indi_sasaran_2 > 0): ?>
                             <?php foreach ($indi_sasaran_2 as $in): ?>
                               <tr>
-                                <td data-bs-toggle="modal" data-bs-target="#edit_indi_<?= $in['id_is_renstra']; ?>"><?= $in['uraian_is']; ?></td>
+                                <td data-bs-toggle="modal" data-bs-target="#edit_indi_<?= $in['id_is_renstra']; ?>" class="text-primary"><?= $in['uraian_is']; ?></td>
                                 <?php if (!empty($in['satuan_is'])): ?>
                                   <td class="text-center" data-toggle="tooltip" data-placement="top" title="Formulasi : <?= $in['formulasi_is']; ?>"><?= $in['satuan_is'] ?></td>
                                 <?php else: ?>
@@ -449,7 +543,7 @@
                               $data_indi_sasaran_2 = $db->table('tb_renstra_indi_sasaran')->where(['id_is_renstra' => $in['id_is_renstra']])->get()->getRowArray();
                               ?>
 
-                              <!-- Modal edit indi Sasaran 1 -->
+                              <!-- Modal edit indi Sasaran Baris ke 2 dan seterusnya -->
                               <div class="modal fade" id="edit_indi_<?= $in['id_is_renstra']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                   <div class="modal-content">
@@ -468,6 +562,8 @@
                                     <div class="modal-body">
                                       <div class="card">
                                         <div class="card-body">
+                                          <!-- tombol pilih program indikator sasaran pada baris ke 2 dan -->
+                                          <a class="btn btn-primary btn-block btn-mat mb-2 text-white" data-bs-toggle="modal" data-bs-target="#pilihprogram_<?= $in['id_is_renstra']; ?>"><i class="fa-solid fa-list-check"></i> Choose Program</a>
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Uraian Sasaran</label>
                                             <p><?= $t['uraian_sasaran']; ?></p>
@@ -482,48 +578,54 @@
 
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Uraian Indikator Sasaran</label>
-                                            <input type="text" name="uraian_is" class="form-control" value="<?= $data_indi_sasaran_2['uraian_is']; ?>" required placeholder="Input Uraian Indikator Sasaran">
+                                            <textarea name="uraian_is" class="form-control" required rows="2" placeholder="Input Uraian Indikator Sasaran"><?= $data_indi_sasaran_2['uraian_is']; ?></textarea>
                                             <span class="help-block text-danger"></span>
                                           </div>
 
                                           <div class="mb-3">
-                                            <label class="form-label font-weight-bold">Kondisi Awal</label>
-                                            <input type="number" name="kondisi_awal_is" class="form-control" value="<?= $data_indi_sasaran_2['kondisi_awal_is']; ?>" required placeholder="Input Kondisi Awal">
-                                            <span class="help-block text-danger"></span>
+                                            <label class="form-label font-weight-bold text-center">Kondisi Awal</label>
                                           </div>
+                                          <div class="form-group row">
+                                            <div class="col-sm-6">
+                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] - 1; ?></label>
+                                              <input type="number" value="<?= $data_indi_sasaran_2['kondisi_awal_is']; ?>" name="kondisi_awal_is" class="form-control" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] - 1; ?>">
+                                            </div>
+                                            <div class="col-sm-6">
+                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd']; ?></label>
+                                              <input type="number" name="target_is_th1" class="form-control" value="<?= $data_indi_sasaran_2['target_is_th1']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd']; ?>">
+                                            </div>
+                                          </div>
+
+
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold text-center">Target</label>
                                           </div>
                                           <div class="form-group row">
                                             <div class="col-sm-6">
-                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] - 1; ?></label>
-                                              <input type="number" name="target_is_th1" class="form-control" value="<?= $data_indi_sasaran_2['target_is_th1']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] - 1; ?>">
-                                            </div>
-                                            <div class="col-sm-6">
-                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd']; ?></label>
-                                              <input type="number" name="target_is_th2" class="form-control" value="<?= $data_indi_sasaran_2['target_is_th2']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd']; ?>">
-                                            </div>
-                                          </div>
-
-                                          <div class="form-group row">
-                                            <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 1; ?></label>
-                                              <input type="number" name="target_is_th3" class="form-control" value="<?= $data_indi_sasaran_2['target_is_th3']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 1; ?>">
+                                              <input type="number" name="target_is_th2" class="form-control" value="<?= $data_indi_sasaran_2['target_is_th2']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 1; ?>">
                                             </div>
                                             <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 2; ?></label>
-                                              <input type="number" name="target_is_th4" class="form-control" value="<?= $data_indi_sasaran_2['target_is_th4']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 2; ?>">
+                                              <input type="number" name="target_is_th3" class="form-control" value="<?= $data_indi_sasaran_2['target_is_th3']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 2; ?>">
                                             </div>
                                           </div>
 
                                           <div class="form-group row">
                                             <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 3; ?></label>
-                                              <input type="number" name="target_is_th5" class="form-control" value="<?= $data_indi_sasaran_2['target_is_th5']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 3; ?>">
+                                              <input type="number" name="target_is_th4" class="form-control" value="<?= $data_indi_sasaran_2['target_is_th4']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 3; ?>">
                                             </div>
                                             <div class="col-sm-6">
                                               <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 4; ?></label>
-                                              <input type="number" name="target_is_th6" class="form-control" value="<?= $data_indi_sasaran_2['target_is_th6']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 4; ?>">
+                                              <input type="number" name="target_is_th5" class="form-control" value="<?= $data_indi_sasaran_2['target_is_th5']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 4; ?>">
+                                            </div>
+                                          </div>
+
+                                          <div class="form-group row">
+                                            <div class="col-sm-6">
+                                              <label class="form-label font-weight-bold">Th. <?= $t['th_awal_rpjmd'] + 5; ?></label>
+                                              <input type="number" name="target_is_th6" class="form-control" value="<?= $data_indi_sasaran_2['target_is_th6']; ?>" required placeholder="Target Th. <?= $t['th_awal_rpjmd'] + 5; ?>">
                                             </div>
                                           </div>
 
@@ -541,15 +643,16 @@
 
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Formulasi</label>
-                                            <input type="text" name="formulasi_is" class="form-control" value="<?= $data_indi_sasaran_2['formulasi_is']; ?>" required placeholder="Input Formulasi">
+                                            <textarea name="formulasi_is" rows="3" class="form-control" required placeholder="Input Formulasi"><?= $data_indi_sasaran_2['formulasi_is']; ?></textarea>
                                             <span class="help-block text-danger"></span>
                                           </div>
 
                                           <div class="mb-3">
                                             <label class="form-label font-weight-bold">Keterangan</label>
-                                            <input type="text" name="keterangan_is" class="form-control" value="<?= $data_indi_sasaran_2['keterangan_is']; ?>" required placeholder="Input Keterangan">
+                                            <textarea name="keterangan_is" rows="3" class="form-control" required placeholder="Input Keterangan"><?= $data_indi_sasaran_2['keterangan_is']; ?></textarea>
                                             <span class="help-block text-danger"></span>
                                           </div>
+
                                           <?php if ($d_rpjmd['status_rpjmd'] == 'Aktif'): ?>
                                             <div>
                                               <button type="submit" class="btn btn-inverse btn-block">Update</button>
@@ -563,6 +666,94 @@
                                   </div>
                                   <!-- <div class="modal-footer d-flex justify-content-center"> -->
                                   <?= form_close(); ?>
+                                </div>
+                              </div>
+
+                              <!-- Modal Pilih Program Indikator Sasaran Baris ke 2 dan seterusnya -->
+                              <div class="modal fade" id="pilihprogram_<?= $in['id_is_renstra']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title font-weight-bold" id="exampleModalLabel" id="modal-title">Indikator : <?= $in['uraian_is']; ?></h5>
+                                      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                    </div>
+                                    <?php
+                                    // menampilkan seluruh program pada opd yang dipilih
+                                    $program        = $db->table('tb_master')->join('tb_renstra_bidang_opd', 'tb_master.kode_bidang=tb_renstra_bidang_opd.kode_bidang')->join('tb_opd', 'tb_renstra_bidang_opd.kode_opd=tb_opd.kode_opd')->where('tb_opd.kode_opd', $opd['kode_opd'])->groupBy('kode_program')->get()->getResultArray();
+                                    //mngecek jumlah program sudah dipilih
+                                    $cek_program    = $db->table('tb_renstra_is_prog')->where('id_is_renstra', $in['id_is_renstra'])->get()->getNumRows();
+                                    // menampilkan program yang sudah dipilih guna edit data
+                                    $data_is_prog   = $db->table('tb_renstra_is_prog')->where('id_is_renstra', $in['id_is_renstra'])->get()->getResultArray();
+
+                                    $data_is_prog_array = [];
+                                    foreach ($data_is_prog as $kt) {
+                                      $data_is_prog_array[$kt['kode_program']] = true;
+                                    }
+
+                                    $cek_is_prog = $db->table('tb_renstra_is_prog')->where(['id_is_renstra !=' => $in['id_is_renstra'], 'kode_opd' => $opd['kode_opd']])->get()->getResultArray();
+                                    $data_cek_is_prog_array = [];
+                                    foreach ($cek_is_prog as $c) {
+                                      $data_cek_is_prog_array[$c['kode_program']] = true;
+                                    }
+                                    ?>
+
+                                    <?php if ($cek_program == 0): ?>
+                                      <?= form_open('sasaran-renstra/choose-program'); ?>
+                                      <?= csrf_field() ?>
+                                      <div class="modal-body">
+                                        <div class="card">
+                                          <div class="card-body">
+                                            <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
+                                            <input type="hidden" name="id_is_renstra" value="<?= $in['id_is_renstra']; ?>">
+                                            <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
+                                            <div class="mb-3">
+                                              <label class="form-label font-weight-bold">Program</label>
+                                              <select class="js-example-basic-multiple col-sm-12 z-index-10" name="kode_program[]" multiple="multiple" required>
+
+                                                <?php foreach ($program as $p): ?>
+                                                  <option value="<?= $p['kode_program']; ?>" <?= isset($data_cek_is_prog_array[$p['kode_program']]) ? 'disabled' : '' ?>><?= $p['kode_program']; ?> - <?= $p['nama_program']; ?></option>
+                                                <?php endforeach ?>
+                                              </select>
+                                              <span class="help-block text-danger"></span>
+                                            </div>
+                                            <div>
+                                              <button type="submit" class="btn btn-inverse btn-block">Simpan Program</button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <?= form_close(); ?>
+                                    <?php else: ?>
+                                      <?= form_open('sasaran-renstra/edit-choose-program'); ?>
+                                      <?= csrf_field() ?>
+                                      <div class="modal-body">
+                                        <div class="card">
+                                          <div class="card-body">
+                                            <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
+                                            <input type="hidden" name="id_is_renstra" value="<?= $in['id_is_renstra']; ?>">
+                                            <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
+                                            <div class="mb-3">
+                                              <label class="form-label font-weight-bold">Program</label>
+                                              <select class="js-example-basic-multiple col-sm-12" name="kode_program[]" multiple="multiple" required>
+                                                <?php foreach ($program as $p): ?>
+                                                  <option value="<?= $p['kode_program']; ?>" <?= isset($data_cek_is_prog_array[$p['kode_program']]) ? 'disabled' : '' ?> <?= isset($data_is_prog_array[$p['kode_program']]) ? 'selected' : '' ?>><?= $p['kode_program']; ?> - <?= $p['nama_program']; ?></option>
+                                                <?php endforeach ?>
+                                              </select>
+                                              <span class="help-block text-danger"></span>
+                                            </div>
+                                            <div>
+                                              <button type="submit" class="btn btn-inverse btn-block">Edit Program</button>
+                                              <a onclick="hapusIsProg(`<?= $in['id_is_renstra']; ?>`, `<?= $opd['kode_opd']; ?>`, `<?= $in['uraian_is']; ?>`)" class="btn btn-danger btn-block text-white">Hapus Semua Program Terpilih</a>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <?= form_close(); ?>
+                                    <?php endif ?>
+
+                                  </div>
                                 </div>
                               </div>
                             <?php endforeach ?>
@@ -701,6 +892,43 @@
       if (result.isConfirmed) {
         $.ajax({
           url: '<?= site_url('sasaran-renstra/delete-indi/') ?>' + id,
+          type: 'DELETE',
+          dataType: 'JSON',
+          success: function(response) {
+            Swal.fire({
+              title: "Data Terhapus!",
+              text: "Selamat Data Berhasil Dihapus",
+              confirmButtonColor: "#404E67",
+              iconColor: '#404E67',
+              icon: "success"
+            }).then(function() {
+              location.reload();
+            });
+          },
+          error: function(jqXHR, textStatus, errorThrow) {
+            alert('Gagal Hapus Data, Silahkan Coba Lagi');
+          }
+        });
+
+      }
+    });
+  }
+
+  function hapusIsProg(id, kode_opd, uraian_is) {
+    $('#pilihprogram_' + id).modal('hide');
+    Swal.fire({
+      title: "Hapus Data?",
+      html: "Program Indikator Sasaran </br><strong>" + uraian_is + "</strong>",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#404E67",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: '<?= site_url('sasaran-renstra/delete-is-prog/') ?>' + id + "/" + kode_opd,
           type: 'DELETE',
           dataType: 'JSON',
           success: function(response) {
