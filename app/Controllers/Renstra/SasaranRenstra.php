@@ -13,9 +13,13 @@ class SasaranRenstra extends BaseController
     $rpjmd = session()->get('rpjmd');
 
     if (!empty($rpjmd)) {
-      $sasaran = $this->sasaranrenstra->join('tb_opd', 'tb_renstra_sasaran.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_sasaran.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['tb_renstra_sasaran.id_rpjmd' => $rpjmd, 'tb_renstra_sasaran.kode_opd' => $kode])->orderBy('kode_sasaran', 'ASC')->findAll();
+      $sasaran = $this->sasaranrenstra->join('tb_opd', 'tb_renstra_sasaran.kode_opd = tb_opd.kode_opd')
+        ->join('tb_rpjmd', 'tb_renstra_sasaran.id_rpjmd = tb_rpjmd.id_rpjmd')
+        ->where(['tb_renstra_sasaran.id_rpjmd' => $rpjmd, 'tb_renstra_sasaran.kode_opd' => $kode])->orderBy('kode_sasaran', 'ASC')->findAll();
     } else {
-      $sasaran = $this->sasaranrenstra->join('tb_opd', 'tb_renstra_sasaran.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_sasaran.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['status_rpjmd' => 'Aktif', 'tb_renstra_sasaran.kode_opd' => $kode])->orderBy('kode_sasaran', 'ASC')->findAll();
+      $sasaran = $this->sasaranrenstra->join('tb_opd', 'tb_renstra_sasaran.kode_opd = tb_opd.kode_opd')
+        ->join('tb_rpjmd', 'tb_renstra_sasaran.id_rpjmd = tb_rpjmd.id_rpjmd')
+        ->where(['status_rpjmd' => 'Aktif', 'tb_renstra_sasaran.kode_opd' => $kode])->orderBy('kode_sasaran', 'ASC')->findAll();
     }
 
     $data = array(
@@ -173,11 +177,39 @@ class SasaranRenstra extends BaseController
 
   public function edit_choose_program()
   {
-    $this->renstraisprog->where('id_is_renstra', $this->request->getPost('id_is_renstra'))->delete();
+    $is_prog_lama = $this->renstraisprog->where('id_is_renstra', $this->request->getPost('id_is_renstra'))->findAll();
+    $pilihan = $this->request->getPost('kode_program');
+    foreach ($is_prog_lama as $value) {
+      $cek_ip_isprog = $this->indiprogramrenstra->where('kode_program', $value['kode_program'])->first();
+      // cek isprog apakah sudah mempunyai ip
+      if (!empty($cek_ip_isprog)) {
+        foreach ($pilihan as $pil) {
+          if ($pil == $value['kode_program']) {
+            $this->renstraisprog->where('kode_program', $value['kode_program'])->delete();
+          } else {
+            if ($cek_ip_isprog['kode_program'] == $value['kode_program']) {
+              $this->indiprogramrenstra->where('kode_program', $value['kode_program'])->delete();
+              $this->renstraisprog->where('kode_program', $value['kode_program'])->delete();
+            }
+          }
+        }
+        // foreach ($pilihan as $pil) {
+        //   if ($pil == $cek_ip_isprog['kode_program']) {
+        //     $cek_ip_pil = $this->indiprogramrenstra->where('kode_program', $pil)->first();
+        //     if ($cek_ip_pil == null) {
+        //       $this->renstraisprog->where('kode_program', $cek_ip_pil['kode_program'])->delete();
+        //       $this->indiprogramrenstra->where('kode_program', $cek_ip_pil['kode_program'])->delete();
+        //     }
+        //   } else {
+        //     $this->renstraisprog->where('kode_program', $value['kode_program'])->delete();
+        //   }
+        // }
+      } else {
+        $this->renstraisprog->where('kode_program', $value['kode_program'])->delete();
+      }
+    }
 
     $rpjmd = $this->rpjmd->where('status_rpjmd', 'Aktif')->first();
-
-    $pilihan = $this->request->getPost('kode_program');
 
     if (!empty($rpjmd)) {
       foreach ($pilihan as $p) {

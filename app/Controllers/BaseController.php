@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\Renstra\TujuanRenstra;
+use App\Models\IndiProgramRenstraModel;
 use App\Models\IndiSasaranRenstraModel;
 use App\Models\IndiTujuanRenstraModel;
 use App\Models\MasterModel;
@@ -60,7 +61,7 @@ abstract class BaseController extends Controller
      * @return void
      */
     protected $rpjpd, $validation, $rpjmd, $opd, $tahapan;
-    protected $tujuanrenstra, $inditujuanrenstra,  $sasaranrenstra, $indisasaranrenstra, $master, $renstrabidangopd, $renstraisprog;
+    protected $tujuanrenstra, $inditujuanrenstra,  $sasaranrenstra, $indisasaranrenstra, $master, $renstrabidangopd, $renstraisprog, $indiprogramrenstra;
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
     {
         // Do Not Edit This Line
@@ -78,6 +79,7 @@ abstract class BaseController extends Controller
         $this->renstrabidangopd     = new RenstraBidangOpdModel();
         $this->master               = new MasterModel();
         $this->renstraisprog        = new RenstraIsProgModel();
+        $this->indiprogramrenstra   = new IndiProgramRenstraModel();
 
         // Preload any models, libraries, etc, here.
 

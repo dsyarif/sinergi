@@ -55,34 +55,283 @@ $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->get
                 <div class="card-block">
                   <div class="dt-responsive table-responsive">
                     <!-- <table id="datatable1" class="table table-bordered table-hover"> -->
-                    <table id="datatable" class="table table-striped table-bordered nowrap">
+                    <table class="table table-striped table-bordered nowrap">
                       <thead>
                         <tr style="text-align: center; background-color: #354055; color: white;" class="dt-center">
-                          <th rowspan="2" class="text-center" style="width: 5%; vertical-align: middle;">Kode Bidang/Program</th>
-                          <th rowspan="2" class="text-center" style="width: 5%; vertical-align: middle;">Nama Bidang / Program / Indikator Program</th>
+                          <th class="text-center" style="width: 1%; vertical-align: middle;">Kode Bidang/Program</th>
+                          <th class="text-center" style="width: 5%; vertical-align: middle;">Nama Bidang / Program / Indikator Program</th>
                         </tr>
                       </thead>
                       <tbody>
                         <?php foreach ($program as $p):
-                          $is_prog    = $db->table('tb_renstra_is_prog')->where(['kode_opd' => $kode_opd])->get()->getResultArray();
-                          // dd($is_prog);
+                          $is_prog    = $db->table('tb_renstra_is_prog')->join('tb_rpjmd', 'tb_renstra_is_prog.id_rpjmd=tb_rpjmd.id_rpjmd')->where(['kode_opd' => $kode_opd])->orderBy('kode_program', 'ASC')->get()->getResultArray();
                         ?>
                           <tr style="background-color: #01A9AC; color: white;">
-                            <td><?= $p['kode_bidang']; ?></td>
+                            <td class="text-center"><?= $p['kode_bidang']; ?></td>
                             <td><?= $p['nama_bidang']; ?></td>
                           </tr>
                           <?php foreach ($is_prog as $i): ?>
                             <?php if ($p['kode_bidang'] == substr($i['kode_program'], 0, -3)):
-                              $nama_bidang = $db->table('tb_master')->where('kode_program', $i['kode_program'])->get()->getRowArray();
+                              $nm_program = $db->table('tb_master')->where('kode_program', $i['kode_program'])->get()->getRowArray();
                             ?>
-
                               <tr>
-                                <td><?= $i['kode_program']; ?></td>
-                                <td><?= $nama_bidang['nama_program']; ?></td>
+                                <td class="text-center"><?= $i['kode_program']; ?></td>
+                                <td class="text-primary" onclick="tambahIndiProg(`<?= $i['kode_program']; ?>`, `<?= $kode_opd; ?>`, `<?= $nm_program['nama_program']; ?>`, `<?= $p['kode_bidang']; ?>`)"><?= $nm_program['nama_program']; ?></td>
                               </tr>
+                              <?php
+                              $ip_prog = $db->table('tb_renstra_indi_program')->where(['kode_program' => $i['kode_program'], 'kode_opd' => $kode_opd])->orderBy('no_ip_renstra', 'ASC')->get()->getResultArray();
+                              ?>
+                              <?php if (!empty($ip_prog)): ?>
+                                <?php foreach ($ip_prog as $ip): ?>
+                                  <tr>
+                                    <td class="text-center"><?= $ip['no_ip_renstra']; ?>.</td>
+                                    <td>
+                                      <?= $ip['uraian_ip_renstra']; ?>
+                                      <!-- edit sasaran -->
+                                      <a class="text-warning mb-1 ml-2 mr-2" data-bs-toggle="modal" data-bs-target="#edit_ip_<?= $ip['id_ip_renstra']; ?>"><i data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Indikator Program Renstra" class="fas fa-edit"></i></a>
+                                      <!-- hapus sasaran & indi sasaran -->
+                                      <a class="text-danger mb-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus Indikator Program Renstra" onclick="hapusDataIndi(`<?= $ip['id_ip_renstra']; ?>`,`<?= $ip['uraian_ip_renstra']; ?>`)"><i class="fas fa-trash"></i></a>
+                                    </td>
+                                  </tr>
+
+                                  <!-- Modal Edit indi Program -->
+                                  <div class="modal fade" id="edit_ip_<?= $ip['id_ip_renstra']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title font-weight-bold" id="exampleModalLabel" id="modal-title">Edit Indikator Program Renstra</h5>
+                                          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>
+                                        <?= form_open('program-renstra/update-indi'); ?>
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="_method" value="PUT">
+                                        <input type="hidden" name="id_ip_renstra" value="<?= $ip['id_ip_renstra']; ?>">
+                                        <input type="hidden" name="kode_opd" value="<?= $kode_opd; ?>">
+                                        <div class="modal-body">
+                                          <div class="card">
+                                            <div class="card-body">
+                                              <div class="mb-3">
+                                                <label class="form-label font-weight-bold">Nama Program</label>
+                                                <p><?= $nm_program['nama_program']; ?></p>
+                                                <span class="help-block text-danger"></span>
+                                              </div>
+
+                                              <div class="mb-3">
+                                                <label class="form-label font-weight-bold">No. Indikator</label>
+                                                <input type="number" name="no_ip_renstra" class="form-control" value="<?= $ip['no_ip_renstra']; ?>" required placeholder="Input No. Indikator">
+                                                <span class="help-block text-danger"></span>
+                                              </div>
+
+                                              <div class="mb-3">
+                                                <label class="form-label font-weight-bold">Uraian Indikator Program</label>
+                                                <textarea name="uraian_ip_renstra" class="form-control" rows="2" required placeholder="Input Uraian Program"><?= $ip['uraian_ip_renstra']; ?></textarea>
+                                                <span class="help-block text-danger"></span>
+                                              </div>
+
+                                              <div class="mb-3">
+                                                <label class="form-label font-weight-bold text-center">Kondisi Awal</label>
+                                              </div>
+                                              <div class="form-group row">
+                                                <div class="col-sm-6">
+                                                  <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd'] - 1; ?></label>
+                                                  <input type="number" value="<?= $ip['kondisi_awal_ip']; ?>" name="kondisi_awal_ip" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd'] - 1; ?>">
+                                                </div>
+                                                <div class="col-sm-6">
+                                                  <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd']; ?></label>
+                                                  <input type="number" value="<?= $ip['target_ip_th1']; ?>" name="target_ip_th1" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd']; ?>">
+                                                </div>
+                                              </div>
+                                              <div class="mb-3">
+                                                <label class="form-label font-weight-bold text-center">Target</label>
+                                              </div>
+                                              <div class="form-group row">
+                                                <div class="col-sm-6">
+                                                  <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd'] + 1; ?></label>
+                                                  <input type="number" value="<?= $ip['target_ip_th2']; ?>" name="target_ip_th2" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd'] + 1; ?>">
+                                                </div>
+                                                <div class="col-sm-6">
+                                                  <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd'] + 2; ?></label>
+                                                  <input type="number" value="<?= $ip['target_ip_th3']; ?>" name="target_ip_th3" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd'] + 2; ?>">
+                                                </div>
+                                              </div>
+
+
+                                              <div class="form-group row">
+                                                <div class="col-sm-6">
+                                                  <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd'] + 3; ?></label>
+                                                  <input type="number" value="<?= $ip['target_ip_th4']; ?>" name="target_ip_th4" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd'] + 3; ?>">
+                                                </div>
+                                                <div class="col-sm-6">
+                                                  <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd'] + 4; ?></label>
+                                                  <input type="number" value="<?= $ip['target_ip_th5']; ?>" name="target_ip_th5" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd'] + 4; ?>">
+                                                </div>
+                                                <div class="col-sm-6 mt-3">
+                                                  <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd'] + 5; ?></label>
+                                                  <input type="number" value="<?= $ip['target_ip_th6']; ?>" name="target_ip_th6" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd'] + 5; ?>">
+                                                </div>
+                                              </div>
+
+                                              <div class="mb-3">
+                                                <label class="form-label font-weight-bold">Kondisi Akhir</label>
+                                                <input type="number" value="<?= $ip['kondisi_akhir_ip']; ?>" name="kondisi_akhir_ip" class="form-control" required placeholder="Input Kondisi Akhir">
+                                                <span class="help-block text-danger"></span>
+                                              </div>
+
+                                              <div class="mb-3">
+                                                <label class="form-label font-weight-bold">Satuan</label>
+                                                <input type="text" value="<?= $ip['satuan_ip']; ?>" name="satuan_ip" class="form-control" required placeholder="Input Satuan">
+                                                <span class="help-block text-danger"></span>
+                                              </div>
+
+                                              <div class="mb-3">
+                                                <label class="form-label font-weight-bold">Formulasi</label>
+                                                <textarea name="formulasi_ip" rows="3" class="form-control" required placeholder="Input Formulasi"><?= $ip['formulasi_ip']; ?></textarea>
+                                                <span class="help-block text-danger"></span>
+                                              </div>
+
+                                              <div class="mb-3">
+                                                <label class="form-label font-weight-bold">Keterangan</label>
+                                                <textarea name="keterangan_ip" rows="3" class="form-control" required placeholder="Input Keterangan"><?= $ip['keterangan_ip']; ?></textarea>
+                                                <span class="help-block text-danger"></span>
+                                              </div>
+
+                                              <div>
+                                                <button type="submit" class="btn btn-inverse btn-block">Update</button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Bata</button> -->
+                                        </div>
+                                      </div>
+                                      <!-- <div class="modal-footer d-flex justify-content-center"> -->
+                                      <?= form_close(); ?>
+                                    </div>
+                                  </div>
+                                <?php endforeach ?>
+                              <?php endif ?>
                             <?php endif ?>
                           <?php endforeach ?>
                         <?php endforeach ?>
+
+
+                        <!-- Modal tambah indi Program -->
+                        <div class="modal fade" id="tambah_indi_prog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title font-weight-bold" id="exampleModalLabel" id="modal-title">Tambah Indikator Program Renstra</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <?= form_open('program-renstra/add-indi'); ?>
+                              <?= csrf_field() ?>
+                              <input type="hidden" name="kode_bidang" id="kode_bidang_js">
+                              <input type="hidden" name="kode_program" id="kode_program_js">
+                              <input type="hidden" name="kode_opd" id="kode_opd_js">
+                              <div class="modal-body">
+                                <div class="card">
+                                  <div class="card-body">
+                                    <div class="mb-3">
+                                      <label class="form-label font-weight-bold">Nama Program</label>
+                                      <p id="nama_program_js"></p>
+                                      <span class="help-block text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                      <label class="form-label font-weight-bold">No. Indikator</label>
+                                      <input type="number" name="no_ip_renstra" class="form-control" required placeholder="Input No. Indikator">
+                                      <span class="help-block text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                      <label class="form-label font-weight-bold">Uraian Indikator Program</label>
+                                      <textarea name="uraian_ip_renstra" class="form-control" rows="2" required placeholder="Input Uraian Program"></textarea>
+                                      <span class="help-block text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                      <label class="form-label font-weight-bold text-center">Kondisi Awal</label>
+                                    </div>
+                                    <div class="form-group row">
+                                      <div class="col-sm-6">
+                                        <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd'] - 1; ?></label>
+                                        <input type="number" name="kondisi_awal_ip" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd'] - 1; ?>">
+                                      </div>
+                                      <div class="col-sm-6">
+                                        <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd']; ?></label>
+                                        <input type="number" name="target_ip_th1" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd']; ?>">
+                                      </div>
+                                    </div>
+                                    <div class="mb-3">
+                                      <label class="form-label font-weight-bold text-center">Target</label>
+                                    </div>
+                                    <div class="form-group row">
+                                      <div class="col-sm-6">
+                                        <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd'] + 1; ?></label>
+                                        <input type="number" name="target_ip_th2" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd'] + 1; ?>">
+                                      </div>
+                                      <div class="col-sm-6">
+                                        <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd'] + 2; ?></label>
+                                        <input type="number" name="target_ip_th3" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd'] + 2; ?>">
+                                      </div>
+                                    </div>
+
+
+                                    <div class="form-group row">
+                                      <div class="col-sm-6">
+                                        <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd'] + 3; ?></label>
+                                        <input type="number" name="target_ip_th4" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd'] + 3; ?>">
+                                      </div>
+                                      <div class="col-sm-6">
+                                        <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd'] + 4; ?></label>
+                                        <input type="number" name="target_ip_th5" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd'] + 4; ?>">
+                                      </div>
+                                      <div class="col-sm-6 mt-3">
+                                        <label class="form-label font-weight-bold">Th. <?= $d_rpjmd['th_awal_rpjmd'] + 5; ?></label>
+                                        <input type="number" name="target_ip_th6" class="form-control" required placeholder="Target Th. <?= $d_rpjmd['th_awal_rpjmd'] + 5; ?>">
+                                      </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                      <label class="form-label font-weight-bold">Kondisi Akhir</label>
+                                      <input type="number" name="kondisi_akhir_ip" class="form-control" required placeholder="Input Kondisi Akhir">
+                                      <span class="help-block text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                      <label class="form-label font-weight-bold">Satuan</label>
+                                      <input type="text" name="satuan_ip" class="form-control" required placeholder="Input Satuan">
+                                      <span class="help-block text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                      <label class="form-label font-weight-bold">Formulasi</label>
+                                      <textarea name="formulasi_ip" rows="3" class="form-control" required placeholder="Input Formulasi"></textarea>
+                                      <span class="help-block text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                      <label class="form-label font-weight-bold">Keterangan</label>
+                                      <textarea name="keterangan_ip" rows="3" class="form-control" required placeholder="Input Keterangan"></textarea>
+                                      <span class="help-block text-danger"></span>
+                                    </div>
+
+                                    <div>
+                                      <button type="submit" class="btn btn-inverse btn-block">Simpan</button>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Bata</button> -->
+                              </div>
+                            </div>
+                            <!-- <div class="modal-footer d-flex justify-content-center"> -->
+                            <?= form_close(); ?>
+                          </div>
+                        </div>
+
                       </tbody>
                     </table>
                   </div>
@@ -98,46 +347,6 @@ $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->get
   </div>
 </div>
 
-<!-- Modal tambah program -->
-<div class="modal fade" id="modal-tambah" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title font-weight-bold" id="exampleModalLabel" id="modal-title">Tambah Data</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form action="<?= base_url() ?>program-renstra/save" method="POST" id="form-tambah">
-        <?= csrf_field() ?>
-        <div class="modal-body">
-          <div class="card">
-            <div class="card-body">
-              <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
-              <div class="mb-3">
-                <label class="form-label font-weight-bold">Kode Program</label>
-                <input type="text" name="kode_program" class="form-control" required placeholder="Input Kode Program">
-                <span class="help-block text-danger"></span>
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label font-weight-bold">Uraian Program</label>
-                <input type="text" name="uraian_program" class="form-control" required placeholder="Input Uraian Program">
-                <span class="help-block text-danger"></span>
-              </div>
-
-            </div>
-          </div>
-          <div class="d-flex justify-content-center">
-            <button type="submit" class="btn btn-inverse btn-block">Simpan</button>
-          </div>
-          <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Bata</button> -->
-        </div>
-    </div>
-    <!-- <div class="modal-footer d-flex justify-content-center"> -->
-    <?= form_close(); ?>
-  </div>
-</div>
 
 <script>
   $(document).ready(function() {
@@ -169,47 +378,10 @@ $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->get
     });
   });
 
-  function hapusData(id) {
-    Swal.fire({
-      title: "Hapus Data?",
-      text: "Data Akan Dihapus Secara Permanen!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#404E67",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Ya, Hapus!",
-      cancelButtonText: "Batal"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        $.ajax({
-          url: '<?= site_url('program-renstra/delete/') ?>' + id,
-          type: 'DELETE',
-          dataType: 'JSON',
-          success: function(response) {
-            Swal.fire({
-              title: "Data Terhapus!",
-              text: "Selamat Data Berhasil Dihapus",
-              confirmButtonColor: "#404E67",
-              iconColor: '#404E67',
-              icon: "success"
-            }).then(function() {
-              location.reload();
-            });
-          },
-          error: function(jqXHR, textStatus, errorThrow) {
-            alert('Gagal Hapus Data, Silahkan Coba Lagi');
-          }
-        });
-
-      }
-    });
-  }
-
   function hapusDataIndi(id, uraian) {
-    $('#edit_indi_' + id).modal('hide');
     Swal.fire({
       title: "Hapus Data?",
-      html: "Indikator Program </br><strong>" + uraian + "</strong>",
+      html: "<strong>Indikator Program</strong> </br><h6>(" + uraian + ")</h6>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#404E67",
@@ -240,6 +412,15 @@ $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->get
 
       }
     });
+  }
+
+  // Fungsi memunculkan modal tambah indikator program
+  function tambahIndiProg(kode_prog, kode_opd, nama_prog, kode_bidang) {
+    $('#tambah_indi_prog').modal('show');
+    $('#kode_program_js').val(kode_prog);
+    $('#kode_opd_js').val(kode_opd);
+    $('#nama_program_js').html(nama_prog);
+    $('#kode_bidang_js').val(kode_bidang);
   }
 </script>
 <script>
