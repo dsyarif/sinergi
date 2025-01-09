@@ -68,10 +68,12 @@
                             $jml_tujuan        = $db->table('tb_renstra_tujuan')->join('tb_opd', 'tb_renstra_tujuan.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_tujuan.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['tb_renstra_tujuan.id_rpjmd' => $ses_rpjmd, 'tb_opd.kode_opd' => $o['kode_opd']])->get()->getNumRows();
                             $jml_sasaran        = $db->table('tb_renstra_sasaran')->join('tb_opd', 'tb_renstra_sasaran.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_sasaran.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['tb_renstra_sasaran.id_rpjmd' => $ses_rpjmd, 'tb_opd.kode_opd' => $o['kode_opd']])->get()->getNumRows();
                             $jml_program        = $db->table('tb_renstra_is_prog')->join('tb_opd', 'tb_renstra_is_prog.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_is_prog.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['tb_renstra_is_prog.id_rpjmd' => $ses_rpjmd, 'tb_opd.kode_opd' => $o['kode_opd']])->get()->getNumRows();
+                            $jml_kegiatan        = $db->table('tb_renstra_ip_keg')->join('tb_opd', 'tb_renstra_ip_keg.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_ip_keg.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['tb_renstra_ip_keg.id_rpjmd' => $ses_rpjmd, 'tb_opd.kode_opd' => $o['kode_opd']])->get()->getNumRows();
                           } else {
                             $jml_tujuan        = $db->table('tb_renstra_tujuan')->join('tb_opd', 'tb_renstra_tujuan.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_tujuan.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['status_rpjmd' => 'Aktif', 'tb_opd.kode_opd' => $o['kode_opd']])->get()->getNumRows();
                             $jml_sasaran        = $db->table('tb_renstra_sasaran')->join('tb_opd', 'tb_renstra_sasaran.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_sasaran.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['status_rpjmd' => 'Aktif', 'tb_opd.kode_opd' => $o['kode_opd']])->get()->getNumRows();
                             $jml_program        = $db->table('tb_renstra_is_prog')->join('tb_opd', 'tb_renstra_is_prog.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_is_prog.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['status_rpjmd' => 'Aktif', 'tb_opd.kode_opd' => $o['kode_opd']])->get()->getNumRows();
+                            $jml_kegiatan        = $db->table('tb_renstra_ip_keg')->join('tb_opd', 'tb_renstra_ip_keg.kode_opd = tb_opd.kode_opd')->join('tb_rpjmd', 'tb_renstra_ip_keg.id_rpjmd = tb_rpjmd.id_rpjmd')->where(['status_rpjmd' => 'Aktif', 'tb_opd.kode_opd' => $o['kode_opd']])->get()->getNumRows();
                           }
 
                           ?>
@@ -113,7 +115,17 @@
                                 </a>
                               <?php endif ?>
                             </td>
-                            <td class="text-center"><button class="btn hor-grd btn-grd-inverse btn-sm">Kegiatan</button></td>
+                            <td class="text-center">
+                              <?php if (!empty($o['unit'])): ?>
+                                <a href="#" class="btn hor-grd btn-grd-inverse btn-sm">
+                                  <?= $jml_kegiatan; ?> Kegiatan
+                                </a>
+                              <?php else: ?>
+                                <a href="<?= base_url() ?>kegiatan-renstra/add/<?= $o['kode_opd']; ?>" class="btn hor-grd btn-grd-inverse btn-sm">
+                                  <?= $jml_kegiatan; ?> Kegiatan
+                                </a>
+                              <?php endif ?>
+                            </td>
                             <td class="text-center"><button class="btn hor-grd btn-grd-inverse btn-sm">Sub Kegiatan</button></td>
                           </tr>
 

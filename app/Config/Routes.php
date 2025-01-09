@@ -80,14 +80,6 @@ $routes->group('sasaran-renstra', static function ($routes) {
   $routes->add('delete-is-prog/(:num)/(:any)', 'Renstra\SasaranRenstra::delete_is_prog/$1/$2');
 });
 
-// Indikator Tujuan Renstra
-// $routes->group('indi-tujuan-renstra', static function ($routes) {
-//   $routes->add('/(:any)', 'Renstra\IndiTujuanRenstra::index/$1');
-//   $routes->add('add/(:any)', 'Renstra\IndiTujuanRenstra::add/$1');
-//   $routes->add('save', 'Renstra\IndiTujuanRenstra::save');
-//   $routes->add('update', 'Renstra\IndiTujuanRenstra::update');
-//   $routes->add('delete/(:num)', 'Renstra\IndiTujuanRenstra::delete/$1');
-// });
 
 // Program Renstra
 $routes->group('program-renstra', static function ($routes) {
@@ -98,4 +90,23 @@ $routes->group('program-renstra', static function ($routes) {
   $routes->add('delete-indi/(:num)', 'Renstra\ProgramRenstra::delete_indi/$1');
 
   $routes->add('set-rpjmd/(:num)', 'Renstra\ProgramRenstra::set_rpjmd/$1');
+
+  $routes->add('choose-kegiatan', 'Renstra\ProgramRenstra::choose_kegiatan');
+  $routes->add('edit-choose-kegiatan', 'Renstra\ProgramRenstra::edit_choose_kegiatan');
+  $routes->add('delete-ip-keg/(:num)/(:any)', 'Renstra\ProgramRenstra::delete_ip_keg/$1/$2');
+});
+
+// Kegiatan Renstra
+$routes->group('kegiatan-renstra', static function ($routes) {
+  $routes->add('/', 'Renstra\TujuanRenstra');
+  $routes->add('add/(:any)', 'Renstra\KegiatanRenstra::add/$1');
+  $routes->add('add-indi', 'Renstra\KegiatanRenstra::add_indi');
+  $routes->add('update-indi', 'Renstra\KegiatanRenstra::update_indi');
+  $routes->add('delete-indi/(:num)', 'Renstra\KegiatanRenstra::delete_indi/$1');
+
+  $routes->add('set-rpjmd/(:num)', 'Renstra\KegiatanRenstra::set_rpjmd/$1');
+
+  $routes->add('choose-subkegiatan', 'Renstra\KegiatanRenstra::choose_subkegiatan');
+  $routes->add('edit-choose-subkegiatan', 'Renstra\KegiatanRenstra::edit_choose_subkegiatan');
+  $routes->add('delete-ik-subkeg/(:num)/(:any)', 'Renstra\KegiatanRenstra::delete_ik_subkeg/$1/$2');
 });

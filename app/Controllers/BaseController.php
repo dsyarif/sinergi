@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\Renstra\TujuanRenstra;
+use App\Models\IndiKegiatanRenstraModel;
 use App\Models\IndiProgramRenstraModel;
 use App\Models\IndiSasaranRenstraModel;
 use App\Models\IndiTujuanRenstraModel;
@@ -12,6 +13,8 @@ use App\Models\RpjpdModel;
 use App\Models\RpjmdModel;
 use App\Models\OpdModel;
 use App\Models\RenstraBidangOpdModel;
+use App\Models\RenstraIkSubKeg;
+use App\Models\RenstraIpKegModel;
 use App\Models\RenstraIsProgModel;
 use App\Models\SasaranRenstraModel;
 use App\Models\TahapanModel;
@@ -61,7 +64,7 @@ abstract class BaseController extends Controller
      * @return void
      */
     protected $rpjpd, $validation, $rpjmd, $opd, $tahapan;
-    protected $tujuanrenstra, $inditujuanrenstra,  $sasaranrenstra, $indisasaranrenstra, $master, $renstrabidangopd, $renstraisprog, $indiprogramrenstra;
+    protected $tujuanrenstra, $inditujuanrenstra,  $sasaranrenstra, $indisasaranrenstra, $master, $renstrabidangopd, $renstraisprog, $indiprogramrenstra, $renstraipkeg, $indikegiatanrenstra, $renstraiksubkeg;
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
     {
         // Do Not Edit This Line
@@ -80,6 +83,9 @@ abstract class BaseController extends Controller
         $this->master               = new MasterModel();
         $this->renstraisprog        = new RenstraIsProgModel();
         $this->indiprogramrenstra   = new IndiProgramRenstraModel();
+        $this->renstraipkeg         = new RenstraIpKegModel();
+        $this->indikegiatanrenstra  = new IndiKegiatanRenstraModel();
+        $this->renstraiksubkeg      = new RenstraIkSubKeg();
 
         // Preload any models, libraries, etc, here.
 

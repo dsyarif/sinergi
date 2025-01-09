@@ -67,7 +67,7 @@ $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->get
                           $is_prog    = $db->table('tb_renstra_is_prog')->join('tb_rpjmd', 'tb_renstra_is_prog.id_rpjmd=tb_rpjmd.id_rpjmd')->where(['kode_opd' => $kode_opd])->orderBy('kode_program', 'ASC')->get()->getResultArray();
                         ?>
                           <tr style="background-color: #01A9AC; color: white;">
-                            <td class="text-center"><?= $p['kode_bidang']; ?></td>
+                            <td class="text-left"><?= $p['kode_bidang']; ?></td>
                             <td><?= $p['nama_bidang']; ?></td>
                           </tr>
                           <?php foreach ($is_prog as $i): ?>
@@ -82,11 +82,13 @@ $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->get
                               $ip_prog = $db->table('tb_renstra_indi_program')->where(['kode_program' => $i['kode_program'], 'kode_opd' => $kode_opd])->orderBy('no_ip_renstra', 'ASC')->get()->getResultArray();
                               ?>
                               <?php if (!empty($ip_prog)): ?>
-                                <?php foreach ($ip_prog as $ip): ?>
+                                <?php foreach ($ip_prog as $ip):
+                                  $jml_kegiatan = $db->table('tb_renstra_ip_keg')->where('id_ip_renstra', $ip['id_ip_renstra'])->get()->getNumRows();
+                                ?>
                                   <tr>
-                                    <td class="text-center"><?= $ip['no_ip_renstra']; ?>.</td>
+                                    <td class="text-right"><?= $ip['no_ip_renstra']; ?>.</td>
                                     <td>
-                                      <?= $ip['uraian_ip_renstra']; ?>
+                                      <?= $ip['uraian_ip_renstra']; ?> [<?= $jml_kegiatan; ?> Kegiatan]
                                       <!-- edit sasaran -->
                                       <a class="text-warning mb-1 ml-2 mr-2" data-bs-toggle="modal" data-bs-target="#edit_ip_<?= $ip['id_ip_renstra']; ?>"><i data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Indikator Program Renstra" class="fas fa-edit"></i></a>
                                       <!-- hapus sasaran & indi sasaran -->
@@ -112,6 +114,8 @@ $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->get
                                         <div class="modal-body">
                                           <div class="card">
                                             <div class="card-body">
+                                              <!-- tombol pilih program indikator sasaran pada baris ke 1 -->
+                                              <a class="btn btn-primary btn-block btn-mat mb-2 text-white" data-bs-toggle="modal" data-bs-target="#pilihkegiatan_<?= $ip['id_ip_renstra']; ?>"><i class="fa-solid fa-list-check"></i> Choose Kegiatan</a>
                                               <div class="mb-3">
                                                 <label class="form-label font-weight-bold">Nama Program</label>
                                                 <p><?= $nm_program['nama_program']; ?></p>
@@ -205,8 +209,97 @@ $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->get
                                           <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Bata</button> -->
                                         </div>
                                       </div>
-                                      <!-- <div class="modal-footer d-flex justify-content-center"> -->
                                       <?= form_close(); ?>
+
+                                    </div>
+                                  </div>
+
+                                  <!-- Modal Pilih Kegiatan Indikator Kegiatan -->
+                                  <div class="modal fade" id="pilihkegiatan_<?= $ip['id_ip_renstra']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title font-weight-bold" id="exampleModalLabel" id="modal-title">Indikator : <?= $ip['uraian_ip_renstra']; ?></h5>
+                                          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>
+                                        <?php
+                                        // menampilkan seluruh kegiatan pada opd yang dipilih
+                                        $kegiatan        = $db->table('tb_master')->join('tb_renstra_bidang_opd', 'tb_master.kode_bidang=tb_renstra_bidang_opd.kode_bidang')->join('tb_opd', 'tb_renstra_bidang_opd.kode_opd=tb_opd.kode_opd')->where(['tb_opd.kode_opd' => $opd['kode_opd'], 'tb_master.kode_program' => $ip['kode_program']])->groupBy('kode_kegiatan')->get()->getResultArray();
+                                        //mngecek jumlah kegiatan sudah dipilih
+                                        $cek_kegiatan    = $db->table('tb_renstra_ip_keg')->where('id_ip_renstra', $ip['id_ip_renstra'])->get()->getNumRows();
+                                        // menampilkan kegiatan yang sudah dipilih guna edit data
+                                        $data_ip_keg   = $db->table('tb_renstra_ip_keg')->where('id_ip_renstra', $ip['id_ip_renstra'])->get()->getResultArray();
+
+                                        $data_ip_keg_array = [];
+                                        foreach ($data_ip_keg as $kt) {
+                                          $data_ip_keg_array[$kt['kode_kegiatan']] = true;
+                                        }
+
+                                        $cek_is_prog = $db->table('tb_renstra_ip_keg')->where(['id_ip_renstra !=' => $ip['id_ip_renstra'], 'kode_opd' => $opd['kode_opd']])->get()->getResultArray();
+                                        $data_cek_is_prog_array = [];
+                                        foreach ($cek_is_prog as $c) {
+                                          $data_cek_is_prog_array[$c['kode_kegiatan']] = true;
+                                        }
+                                        ?>
+
+                                        <?php if ($cek_kegiatan == 0): ?>
+                                          <?= form_open('program-renstra/choose-kegiatan'); ?>
+                                          <?= csrf_field() ?>
+                                          <div class="modal-body">
+                                            <div class="card">
+                                              <div class="card-body">
+                                                <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
+                                                <input type="hidden" name="id_ip_renstra" value="<?= $ip['id_ip_renstra']; ?>">
+                                                <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
+                                                <div class="mb-3">
+                                                  <label class="form-label font-weight-bold">Kegiatan</label>
+                                                  <select class="js-example-basic-multiple col-sm-12 z-index-10" name="kode_kegiatan[]" multiple="multiple" required>
+
+                                                    <?php foreach ($kegiatan as $p): ?>
+                                                      <option value="<?= $p['kode_kegiatan']; ?>" <?= isset($data_cek_is_prog_array[$p['kode_kegiatan']]) ? 'disabled' : '' ?>><?= $p['kode_kegiatan']; ?> - <?= $p['nama_kegiatan']; ?></option>
+                                                    <?php endforeach ?>
+                                                  </select>
+                                                  <span class="help-block text-danger"></span>
+                                                </div>
+                                                <div>
+                                                  <button type="submit" class="btn btn-inverse btn-block">Simpan Kegiatan</button>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <?= form_close(); ?>
+                                        <?php else: ?>
+                                          <?= form_open('program-renstra/edit-choose-kegiatan'); ?>
+                                          <?= csrf_field() ?>
+                                          <div class="modal-body">
+                                            <div class="card">
+                                              <div class="card-body">
+                                                <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
+                                                <input type="hidden" name="id_ip_renstra" value="<?= $ip['id_ip_renstra']; ?>">
+                                                <input type="hidden" name="kode_opd" value="<?= $opd['kode_opd']; ?>">
+                                                <div class="mb-3">
+                                                  <label class="form-label font-weight-bold">Kegiatan</label>
+                                                  <select class="js-example-basic-multiple col-sm-12" name="kode_kegiatan[]" multiple="multiple" required>
+                                                    <?php foreach ($kegiatan as $p): ?>
+                                                      <option value="<?= $p['kode_kegiatan']; ?>" <?= isset($data_cek_is_prog_array[$p['kode_kegiatan']]) ? 'disabled' : '' ?> <?= isset($data_ip_keg_array[$p['kode_kegiatan']]) ? 'selected' : '' ?>><?= $p['kode_kegiatan']; ?> - <?= $p['nama_kegiatan']; ?></option>
+                                                    <?php endforeach ?>
+                                                  </select>
+                                                  <span class="help-block text-danger"></span>
+                                                </div>
+                                                <div>
+                                                  <button type="submit" class="btn btn-inverse btn-block">Edit Kegiatan</button>
+                                                  <a onclick="hapusIpKeg(`<?= $ip['id_ip_renstra']; ?>`, `<?= $opd['kode_opd']; ?>`, `<?= $ip['uraian_ip_renstra']; ?>`)" class="btn btn-danger btn-block text-white">Hapus Semua Kegiatan Terpilih</a>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <?= form_close(); ?>
+                                        <?php endif ?>
+
+
+                                      </div>
                                     </div>
                                   </div>
                                 <?php endforeach ?>
@@ -392,6 +485,43 @@ $opd        = $db->table('tb_opd')->where(['kode_opd' => $kode_opd])->get()->get
       if (result.isConfirmed) {
         $.ajax({
           url: '<?= site_url('program-renstra/delete-indi/') ?>' + id,
+          type: 'DELETE',
+          dataType: 'JSON',
+          success: function(response) {
+            Swal.fire({
+              title: "Data Terhapus!",
+              text: "Selamat Data Berhasil Dihapus",
+              confirmButtonColor: "#404E67",
+              iconColor: '#404E67',
+              icon: "success"
+            }).then(function() {
+              location.reload();
+            });
+          },
+          error: function(jqXHR, textStatus, errorThrow) {
+            alert('Gagal Hapus Data, Silahkan Coba Lagi');
+          }
+        });
+
+      }
+    });
+  }
+
+  function hapusIpKeg(id, kode_opd, uraian_ip) {
+    $('#pilihkegiatan_' + id).modal('hide');
+    Swal.fire({
+      title: "Hapus Semua Kegiatan?",
+      html: "Indikator Program </br><strong>" + uraian_ip + "</strong>",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#404E67",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: '<?= site_url('program-renstra/delete-ip-keg/') ?>' + id + "/" + kode_opd,
           type: 'DELETE',
           dataType: 'JSON',
           success: function(response) {
